@@ -107,7 +107,13 @@ public class Job implements Serializable {
     public Date getDate() {
         return date;
     }
-
+    public int getPrice() {
+        return 100000;
+    }
+    
+    public Boolean getState() {
+        return false;
+    }
     public void setDate(Date date) {
         this.date = date;
     }

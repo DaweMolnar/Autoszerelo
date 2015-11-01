@@ -5,6 +5,9 @@
  */
 package autoszerelo.gui.main;
 
+import autoszerelo.database.entities.Workers;
+import autoszerelo.gui.dialogs.NewWorkerDialog;
+import autoszerelo.gui.model.JobTable;
 import autoszerelo.gui.model.WorkerTable;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -22,9 +25,10 @@ import javax.swing.JTabbedPane;
  *
  * @author dmolnar
  */
-public class MainFrame extends JFrame implements WorkerTableInterface {
+public class MainFrame extends JFrame implements WorkerTableInterface, JobTableInterface{
     private JPanel panel;
     private WorkerTable wTable;
+    private JobTable jTable;
     
     public MainFrame() {
         setTitle("Autoszerelo");
@@ -34,8 +38,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface {
         
         panel = new JPanel();
         wTable = new WorkerTable(this);
+        jTable = new JobTable(this);
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.add(new JScrollPane(wTable.getTable()));
+        tabbedPane.add("Dolgozok",new JScrollPane(wTable.getTable()));
+        tabbedPane.add("Munkalapok",new JScrollPane(jTable.getTable()));
 
         JMenuBar menubar = new JMenuBar();
         JMenu menu = new JMenu("Hozzaadas");
@@ -44,7 +50,16 @@ public class MainFrame extends JFrame implements WorkerTableInterface {
         item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            
+            NewWorkerDialog dialog = new NewWorkerDialog();
+                if(dialog.isClosed() && dialog.isSent()){
+                    Workers p = new Workers();
+                    p.setName(dialog.getWorkerName());
+                    p.setAddress(dialog.getAddress());
+                    p.setPhone(dialog.getPhoneNumber());
+                    p.setWage(dialog.getWage());
+                    p.setId(dialog.getId());
+                    wTable.add(p);
+                }
             }
         });
         menu.add(item);
@@ -55,6 +70,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface {
     
     @Override
     public void onWorkerUpdate(Integer id) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    @Override
+    public void onJobUpdate(Integer id) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
