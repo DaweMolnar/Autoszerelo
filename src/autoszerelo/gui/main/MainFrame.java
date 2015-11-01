@@ -5,7 +5,9 @@
  */
 package autoszerelo.gui.main;
 
+import autoszerelo.database.entities.Job;
 import autoszerelo.database.entities.Workers;
+import autoszerelo.gui.dialogs.NewJobDialog;
 import autoszerelo.gui.dialogs.NewWorkerDialog;
 import autoszerelo.gui.model.JobTable;
 import autoszerelo.gui.model.WorkerTable;
@@ -63,6 +65,26 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item);
+        JMenuItem item2 = new JMenuItem("Add munkalap");
+        item2.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            NewJobDialog dialog = new NewJobDialog();
+                if(dialog.isClosed() && dialog.isSent()){
+                    Job p = new Job();
+                    p.setId(dialog.getId());
+                    p.setClientname(dialog.getClientName());
+                    p.setAddress(dialog.getAddress());
+                    p.setLicenseNo(dialog.getPlateNumber());
+                    p.setWorkerid(dialog.getWorkerId());
+                    p.setDate(dialog.getDate());
+                    p.setState(false);
+                    p.setLength(dialog.getLength());
+                    jTable.add(p);
+                }
+            }
+        });
+        menu.add(item2);
         menubar.add(menu);
         setJMenuBar(menubar);
         add(tabbedPane);

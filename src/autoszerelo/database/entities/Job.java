@@ -45,9 +45,13 @@ public class Job implements Serializable {
     private String address;
     @Column(name = "LICENSE_NO")
     private String licenseNo;
+    @Column(name = "CLOSED")
+    private Boolean closed;
     @Basic(optional = false)
     @Column(name = "WORKERID")
     private int workerid;
+    @Column(name = "LENGTH")
+    private int length;
     @Column(name = "DATE")
     @Temporal(TemporalType.DATE)
     private Date date;
@@ -107,12 +111,24 @@ public class Job implements Serializable {
     public Date getDate() {
         return date;
     }
+    
+    public int getLength() {
+        return length;
+    }
+    
+    public void setLength(int length) {
+        this.length = length;
+    }
+    
     public int getPrice() {
         return 100000;
     }
     
     public Boolean getState() {
-        return false;
+        return closed;
+    }
+    public void setState(Boolean state) {
+        this.closed = state;
     }
     public void setDate(Date date) {
         this.date = date;

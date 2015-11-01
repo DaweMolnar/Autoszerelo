@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.Date;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -18,36 +19,39 @@ import javax.swing.JTextField;
  *
  * @author dmolnar
  */
-public class NewWorkerDialog extends JDialog{
+public class NewJobDialog  extends JDialog{
+    private JTextField tf0;
     private JTextField tf1;
     private JTextField tf2;
     private JTextField tf3;
     private JTextField tf4;
-    private JTextField tf0;
+    private JTextField tf5;
     private JLabel l0;
     private JLabel l1;
     private JLabel l2;
     private JLabel l3;
     private JLabel l4;
-    //private JDatePanelImpl picker;
+    private JLabel l5;
     private boolean sent = false;
     private boolean closed = false;
-    public NewWorkerDialog(){
+    public NewJobDialog(){
         setSize(300, 400);
-        setTitle("Dolgozó hozzáadása");
+        setTitle("Munkalap hozzáadása");
         setLayout(new GridLayout(4, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");
         l2 = new JLabel("Cím");
-        l3 = new JLabel("Telefonszám");
-        l4 = new JLabel("Óradíj");
+        l3 = new JLabel("Rendszám");
+        l4 = new JLabel("MunkatársID");
+        l5 = new JLabel("Munka hossza");
        
         tf0 = new JTextField();
         tf1 = new JTextField();
         tf2 = new JTextField();
         tf3 = new JTextField();
         tf4 = new JTextField();
+        tf5 = new JTextField();
         
         add(l0);
         add(tf0);
@@ -59,6 +63,8 @@ public class NewWorkerDialog extends JDialog{
         add(tf3);
         add(l4);
         add(tf4);
+        add(l5);
+        add(tf5);
         
         JButton button = new JButton("Hozzaadas");
         
@@ -95,7 +101,7 @@ public class NewWorkerDialog extends JDialog{
         return sent;
     }
     
-    public String getWorkerName(){
+    public String getClientName(){
         return tf1.getText();
     }
     
@@ -103,14 +109,20 @@ public class NewWorkerDialog extends JDialog{
         return tf2.getText();
     }
     
-    public String getPhoneNumber(){
+    public String getPlateNumber(){
         return tf3.getText();
     }
     
-    public Integer getWage() {
+    public Integer getWorkerId() {
         return Integer.parseInt(tf4.getText());
     }
     
+    public Integer getLength() {
+        return Integer.parseInt(tf5.getText());
+    }
+    public Date getDate() {
+        return new Date();
+    }
     public Integer getId() {
         return Integer.parseInt(tf0.getText());
     }
