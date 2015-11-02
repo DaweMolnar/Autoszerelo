@@ -35,7 +35,7 @@ public class NewWorkerDialog extends JDialog{
     public NewWorkerDialog(){
         setSize(300, 400);
         setTitle("Dolgozó hozzáadása");
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridLayout(5, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");

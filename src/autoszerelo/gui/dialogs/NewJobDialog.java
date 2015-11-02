@@ -9,7 +9,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -37,7 +39,7 @@ public class NewJobDialog  extends JDialog{
     public NewJobDialog(){
         setSize(300, 400);
         setTitle("Munkalap hozzáadása");
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridLayout(6, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");
@@ -125,5 +127,9 @@ public class NewJobDialog  extends JDialog{
     }
     public Integer getId() {
         return Integer.parseInt(tf0.getText());
+    }
+    
+    public List<Integer> getParts() {
+        return new ArrayList<Integer>();
     }
 }

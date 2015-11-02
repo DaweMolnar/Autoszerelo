@@ -24,7 +24,7 @@ public class PartTable {
         controller.create(p);
     }
 
-    public void remove(Long id){
+    public void remove(Integer id){
         controller.destroy(id);
     }
 }

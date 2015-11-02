@@ -64,7 +64,7 @@ public class JobJpaController  implements Serializable{
         }
     }
 
-    public void destroy(Long id) {
+    public void destroy(Integer id) {
         EntityManager em = null;
         try {
             em = getEntityManager();

@@ -109,6 +109,18 @@ public class PartUsageJpaController {
         }
     }
 
+    public List<Partusage> findPartUsageByJobId(Integer id) {
+        EntityManager em = getEntityManager();
+        try {
+            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+            cq.select(cq.from(Partusage.class));
+            Query q = em.createNamedQuery("Partusage.findByJobid").setParameter("jobid", id);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
     public Partusage findPartUsage(Integer id) {
         EntityManager em = getEntityManager();
         try {

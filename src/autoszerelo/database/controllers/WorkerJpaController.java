@@ -110,7 +110,7 @@ public class WorkerJpaController implements Serializable{
         }
     }
 
-    public Workers findWorker(Long id) {
+    public Workers findWorker(Integer id) {
         EntityManager em = getEntityManager();
         try {
             return em.find(Workers.class, id);

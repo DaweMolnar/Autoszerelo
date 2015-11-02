@@ -63,30 +63,10 @@ public class WorkerTable {
 
         private final String[] columns = {"Név","Cím","Telefonszám","Óradíj"};
         private List<Workers> data = new ArrayList<>();
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            Workers p = data.get(rowIndex);
-            switch(columnIndex){
-                case 1:
-                    p.setName((String)aValue);
-                    break;
-                case 2:
-                    p.setAddress((String)aValue);
-                    break;
-                default:
-                    break;
-            }
-            try{
-                controller.edit(p);
-                cb.onWorkerUpdate(p.getId());
-            } catch (Exception ex) {
-                Logger.getLogger(WorkerTable.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == 1 || columnIndex == 2;
+            return false;
         }
 
         @Override
@@ -113,7 +93,7 @@ public class WorkerTable {
                case 1:
                    return p.getAddress();
                case 2:
-                   return p.getPhone();
+                   return p.getId();
                case 3:
                    return p.getWage();
                default:

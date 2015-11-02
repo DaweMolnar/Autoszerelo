@@ -30,7 +30,7 @@ public class NewPartDialog extends JDialog{
     public NewPartDialog(){
         setSize(300, 400);
         setTitle("Alkatrész hozzáadása");
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridLayout(3, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");

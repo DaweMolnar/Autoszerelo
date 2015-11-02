@@ -8,6 +8,8 @@ package autoszerelo.gui.main;
 import autoszerelo.database.entities.Job;
 import autoszerelo.database.entities.Parts;
 import autoszerelo.database.entities.Workers;
+import autoszerelo.gui.dialogs.DeleteJobDialog;
+import autoszerelo.gui.dialogs.FinalizeJobDialog;
 import autoszerelo.gui.dialogs.NewJobDialog;
 import autoszerelo.gui.dialogs.NewPartDialog;
 import autoszerelo.gui.dialogs.NewWorkerDialog;
@@ -22,7 +24,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
@@ -31,7 +32,6 @@ import javax.swing.JTabbedPane;
  * @author dmolnar
  */
 public class MainFrame extends JFrame implements WorkerTableInterface, JobTableInterface{
-    private JPanel panel;
     private WorkerTable wTable;
     private JobTable jTable;
     private PartTable pTable;
@@ -41,8 +41,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
         setSize(new Dimension(300,400));
         setLayout(new GridLayout(2,1));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        panel = new JPanel();
+
         wTable = new WorkerTable(this);
         jTable = new JobTable(this);
         pTable = new PartTable();
@@ -105,7 +104,35 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item3);
+        
+        JMenu menu2 = new JMenu("Torles");
+        JMenuItem item4 = new JMenuItem("Torol Munkalap");
+        item4.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            DeleteJobDialog dialog = new DeleteJobDialog();
+                if(dialog.isClosed() && dialog.isDeleted()){
+                    Parts p = new Parts();
+                    jTable.remove(dialog.getId());
+                }
+            }
+        });
+        menu2.add(item4);
+        JMenu menu3 = new JMenu("Veglegesit");
+        JMenuItem item5 = new JMenuItem("Munkalap veglegesitese");
+        item5.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            FinalizeJobDialog dialog = new FinalizeJobDialog();
+                if(dialog.isClosed() && dialog.isFinalized()){
+                    jTable.finalize(dialog.getId());
+                }
+            }
+        });
+        menu3.add(item5);
         menubar.add(menu);
+        menubar.add(menu2);
+        menubar.add(menu3);
         setJMenuBar(menubar);
         add(tabbedPane);
     }

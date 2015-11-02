@@ -37,7 +37,7 @@ public class ModifyJobDialog  extends JDialog{
     public ModifyJobDialog(){
         setSize(300, 400);
         setTitle("Munkalap hozzáadása");
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridLayout(6, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");

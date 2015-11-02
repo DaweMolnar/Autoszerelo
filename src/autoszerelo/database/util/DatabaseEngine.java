@@ -7,6 +7,7 @@ package autoszerelo.database.util;
 
 import autoszerelo.database.controllers.JobJpaController;
 import autoszerelo.database.controllers.PartJpaController;
+import autoszerelo.database.controllers.PartUsageJpaController;
 import autoszerelo.database.controllers.WorkerJpaController;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -20,6 +21,7 @@ public class DatabaseEngine {
   private static WorkerJpaController wc;
   private static JobJpaController jc;
   private static PartJpaController pc;
+  private static PartUsageJpaController pu;
  
   public static EntityManagerFactory getEntityManagerFactoryInstance(){
       if(emf == null){
@@ -45,5 +47,11 @@ public class DatabaseEngine {
           pc = new PartJpaController(getEntityManagerFactoryInstance());
       }
       return pc;
+  }
+  public static PartUsageJpaController getPartUsageControllerInstance(){
+      if(pu == null){
+          pu = new PartUsageJpaController(getEntityManagerFactoryInstance());
+      }
+      return pu;
   }
 }

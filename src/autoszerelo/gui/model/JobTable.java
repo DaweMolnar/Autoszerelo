@@ -6,14 +6,16 @@
 package autoszerelo.gui.model;
 
 import autoszerelo.database.controllers.JobJpaController;
+import autoszerelo.database.controllers.PartJpaController;
+import autoszerelo.database.controllers.PartUsageJpaController;
+import autoszerelo.database.controllers.WorkerJpaController;
 import autoszerelo.database.entities.Job;
+import autoszerelo.database.entities.Partusage;
 import autoszerelo.database.util.DatabaseEngine;
 import autoszerelo.gui.main.JobTableInterface;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -23,12 +25,18 @@ import javax.swing.table.AbstractTableModel;
  */
 public class JobTable {
     private final JobJpaController controller;
+    private final WorkerJpaController workerController;
+    private final PartUsageJpaController partUsagecontroller;
+    private final PartJpaController partController;
     private final JobTableInterface cb; 
     private JTable table;
     private InnerTable innerTable;
     
     public JobTable(JobTableInterface cb) {
         this.controller = DatabaseEngine.getJobControllerInstance();
+        this.partUsagecontroller = DatabaseEngine.getPartUsageControllerInstance();
+        this.partController = DatabaseEngine.getPartControllerInstance();
+        this.workerController = DatabaseEngine.getWorkerControllerInstance();
         this.cb = cb;
         
         innerTable = new InnerTable();
@@ -36,54 +44,55 @@ public class JobTable {
         table.setAutoCreateRowSorter(true);
         
         for(Job p : controller.findJobEntities()){
-            innerTable.add(p);
+            innerTable.add(p,getPrice(p.getId()));
         }
     }
+    public void finalize(Integer id) {
+        Job j = controller.findJob(id);
+        j.setState(true);
+        controller.edit(j);
+        innerTable.finalize(id, j);
+        innerTable.fireTableDataChanged();
+    }
     
+    private Integer getPrice(Integer id) {
+        Integer price = new Integer(0);
+        Job j = controller.findJob(id);
+        for(Partusage p : partUsagecontroller.findPartUsageByJobId(id)) {
+            price += partController.findPart(id).getPrice();
+        }
+        price += workerController.findWorker(j.getWorkerid()).getWage()*j.getLength();
+        return price;
+    }
+
     public void add(Job p){
-        innerTable.add(p);
         controller.create(p);
+        innerTable.add(p, getPrice(p.getId()));
         innerTable.fireTableDataChanged();
     }
     
     public Component getTable(){
         return table;
     }
-    public void remove(Long id){
+    public void remove(Integer id){
         //try{
             controller.destroy(id);
-            innerTable.remove(id.intValue());
+            innerTable.remove(id);
             innerTable.fireTableDataChanged();
         //} catch (NonexistentEntityException ex) {
         //    Logger.getLogger(PatientTable.class.getName()).log(Level.SEVERE, null, ex);
         //}
     }
-    
+
     private class InnerTable extends AbstractTableModel {
 
         private final String[] columns = {"Id","Dátum","Vevő neve","Teljes ár","Fizetés állapota"};
         private List<Job> data = new ArrayList<>();
-        @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            Job p = data.get(rowIndex);
-            switch(columnIndex){
-                case 2:
-                    p.setClientname((String)aValue);
-                    break;
-                default:
-                    break;
-            }
-            try{
-                controller.edit(p);
-                cb.onJobUpdate(p.getId());
-            } catch (Exception ex) {
-                Logger.getLogger(WorkerTable.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        private List<Integer> price = new ArrayList<>();
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == 1 || columnIndex == 2;
+            return false;
         }
 
         @Override
@@ -112,7 +121,7 @@ public class JobTable {
                case 2:
                    return p.getClientname();
                case 3:
-                   return p.getPrice();
+                   return price.get(rowIndex);
                case 4:
                    return p.getState();
                default:
@@ -121,14 +130,20 @@ public class JobTable {
            
         }
 
-        private void add(Job p) {
+        private void add(Job p, Integer pr) {
             data.add(p);
+            price.add(pr);
+        }
+        private void finalize(Integer id, Job job) {
+            data.set(data.indexOf(job), job);
         }
 
         private void remove(Integer id) {
             for (Job p : data) {
                 if (p.getId().equals(id)) {
-                    data.remove(p);
+                    int index = data.indexOf(p);
+                    price.remove(index);
+                    data.remove(index);
                     break;
                 }
             }

@@ -63,7 +63,7 @@ public class PartJpaController {
         }
     }
 
-    public void destroy(Long id) {
+    public void destroy(Integer id) {
         EntityManager em = null;
         try {
             em = getEntityManager();

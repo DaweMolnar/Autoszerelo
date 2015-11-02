@@ -5,6 +5,8 @@
  */
 package autoszerelo.database.entities;
 
+import autoszerelo.database.controllers.PartUsageJpaController;
+import autoszerelo.database.util.DatabaseEngine;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -55,7 +57,6 @@ public class Job implements Serializable {
     @Column(name = "DATE")
     @Temporal(TemporalType.DATE)
     private Date date;
-
     public Job() {
     }
 
@@ -118,10 +119,6 @@ public class Job implements Serializable {
     
     public void setLength(int length) {
         this.length = length;
-    }
-    
-    public int getPrice() {
-        return 100000;
     }
     
     public Boolean getState() {

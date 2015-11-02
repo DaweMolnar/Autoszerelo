@@ -5,10 +5,14 @@
  */
 package autoszerelo.gui.dialogs;
 
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -17,9 +21,18 @@ import javax.swing.JDialog;
 public class DeleteJobDialog extends JDialog {
     private boolean deleted = false;
     private boolean closed = false;
+    private JTextField tf0;
+    private JLabel l0;
     public DeleteJobDialog() {
-        JButton button = new JButton("Torles");
+        setSize(300, 400);
+        setTitle("Munkalap törlése");
+        setLayout(new GridLayout(6, 2));
         
+        l0 = new JLabel("Id");
+        tf0 = new JTextField();
+        add(l0);
+        add(tf0);
+        JButton button = new JButton("Torles");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -31,9 +44,20 @@ public class DeleteJobDialog extends JDialog {
             }
         });
         add(button);
+        
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent winEvt) {
+                closed = true;
+                setVisible(false);
+            }
+        });
+        
+        setModal(true);
+        setVisible(true);
     }
     public Integer getId() {
-        return 0;
+        return Integer.parseInt(tf0.getText());
     }
     public boolean isDeleted() {
         return deleted;
