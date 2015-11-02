@@ -26,8 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Parts.findAll", query = "SELECT p FROM Parts p"),
     @NamedQuery(name = "Parts.findById", query = "SELECT p FROM Parts p WHERE p.id = :id"),
     @NamedQuery(name = "Parts.findByName", query = "SELECT p FROM Parts p WHERE p.name = :name"),
-    @NamedQuery(name = "Parts.findByPrice", query = "SELECT p FROM Parts p WHERE p.price = :price"),
-    @NamedQuery(name = "Parts.findByItemNo", query = "SELECT p FROM Parts p WHERE p.itemNo = :itemNo")})
+    @NamedQuery(name = "Parts.findByPrice", query = "SELECT p FROM Parts p WHERE p.price = :price")})
 public class Parts implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -38,8 +37,6 @@ public class Parts implements Serializable {
     private String name;
     @Column(name = "PRICE")
     private Integer price;
-    @Column(name = "ITEM_NO")
-    private Integer itemNo;
 
     public Parts() {
     }
@@ -70,14 +67,6 @@ public class Parts implements Serializable {
 
     public void setPrice(Integer price) {
         this.price = price;
-    }
-
-    public Integer getItemNo() {
-        return itemNo;
-    }
-
-    public void setItemNo(Integer itemNo) {
-        this.itemNo = itemNo;
     }
 
     @Override

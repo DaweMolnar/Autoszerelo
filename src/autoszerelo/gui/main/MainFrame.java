@@ -6,10 +6,13 @@
 package autoszerelo.gui.main;
 
 import autoszerelo.database.entities.Job;
+import autoszerelo.database.entities.Parts;
 import autoszerelo.database.entities.Workers;
 import autoszerelo.gui.dialogs.NewJobDialog;
+import autoszerelo.gui.dialogs.NewPartDialog;
 import autoszerelo.gui.dialogs.NewWorkerDialog;
 import autoszerelo.gui.model.JobTable;
+import autoszerelo.gui.model.PartTable;
 import autoszerelo.gui.model.WorkerTable;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -31,6 +34,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     private JPanel panel;
     private WorkerTable wTable;
     private JobTable jTable;
+    private PartTable pTable;
     
     public MainFrame() {
         setTitle("Autoszerelo");
@@ -41,6 +45,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
         panel = new JPanel();
         wTable = new WorkerTable(this);
         jTable = new JobTable(this);
+        pTable = new PartTable();
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Dolgozok",new JScrollPane(wTable.getTable()));
         tabbedPane.add("Munkalapok",new JScrollPane(jTable.getTable()));
@@ -85,6 +90,21 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item2);
+        JMenuItem item3 = new JMenuItem("Add Alkatrész");
+        item3.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            NewPartDialog dialog = new NewPartDialog();
+                if(dialog.isClosed() && dialog.isSent()){
+                    Parts p = new Parts();
+                    p.setId(dialog.getId());
+                    p.setPrice(dialog.getPrice());
+                    p.setName(dialog.getName());
+                    pTable.add(p);
+                }
+            }
+        });
+        menu.add(item3);
         menubar.add(menu);
         setJMenuBar(menubar);
         add(tabbedPane);
