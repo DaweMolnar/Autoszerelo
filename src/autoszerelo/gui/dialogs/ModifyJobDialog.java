@@ -36,7 +36,7 @@ public class ModifyJobDialog  extends JDialog{
     private boolean closed = false;
     public ModifyJobDialog(){
         setSize(300, 400);
-        setTitle("Munkalap hozzáadása");
+        setTitle("Munkalap módosítása");
         setLayout(new GridLayout(6, 2));
         
         l0 = new JLabel("Id");
@@ -120,9 +120,7 @@ public class ModifyJobDialog  extends JDialog{
     public Integer getLength() {
         return Integer.parseInt(tf5.getText());
     }
-    public Date getDate() {
-        return new Date();
-    }
+
     public Integer getId() {
         return Integer.parseInt(tf0.getText());
     }

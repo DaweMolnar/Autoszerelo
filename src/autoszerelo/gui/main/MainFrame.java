@@ -10,6 +10,7 @@ import autoszerelo.database.entities.Parts;
 import autoszerelo.database.entities.Workers;
 import autoszerelo.gui.dialogs.DeleteJobDialog;
 import autoszerelo.gui.dialogs.FinalizeJobDialog;
+import autoszerelo.gui.dialogs.ModifyJobDialog;
 import autoszerelo.gui.dialogs.NewJobDialog;
 import autoszerelo.gui.dialogs.NewPartDialog;
 import autoszerelo.gui.dialogs.NewWorkerDialog;
@@ -130,9 +131,32 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu3.add(item5);
+        
+        JMenu menu4 = new JMenu("Modositas");
+        JMenuItem item6 = new JMenuItem("Munkalap modositasa");
+        item6.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            ModifyJobDialog dialog = new ModifyJobDialog();
+                if(dialog.isClosed() && dialog.isSent()){
+                    Job p = new Job();
+                    p.setId(dialog.getId());
+                    p.setClientname(dialog.getClientName());
+                    p.setAddress(dialog.getAddress());
+                    p.setLicenseNo(dialog.getPlateNumber());
+                    p.setWorkerid(dialog.getWorkerId());
+                    p.setState(false);
+                    p.setLength(dialog.getLength());
+                    jTable.modify(p);
+                }
+            }
+        });
+        menu4.add(item6);
+        
         menubar.add(menu);
         menubar.add(menu2);
         menubar.add(menu3);
+        menubar.add(menu4);
         setJMenuBar(menubar);
         add(tabbedPane);
     }

@@ -71,6 +71,18 @@ public class JobTable {
         innerTable.fireTableDataChanged();
     }
     
+    public void modify(Job p) {
+        Job j = controller.findJob(p.getId());
+        j.setClientname(p.getClientname());
+        j.setAddress(p.getAddress());
+        j.setLicenseNo(p.getLicenseNo());
+        j.setWorkerid(p.getWorkerid());
+        j.setLength(p.getLength());
+        controller.edit(j);
+        innerTable.remove(j.getId());
+        innerTable.add(j,getPrice(j.getId()));
+        innerTable.fireTableDataChanged();
+    }
     public Component getTable(){
         return table;
     }
