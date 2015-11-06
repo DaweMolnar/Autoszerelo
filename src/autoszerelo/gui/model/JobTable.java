@@ -88,6 +88,10 @@ public class JobTable {
     }
     public void remove(Integer id){
         //try{
+            for(Partusage u : partUsagecontroller.findPartUsageByJobId(id)) {
+                partUsagecontroller.destroy(u.getId());
+            }
+            //TODO remove from partusage table
             controller.destroy(id);
             innerTable.remove(id);
             innerTable.fireTableDataChanged();
