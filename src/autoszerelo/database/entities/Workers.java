@@ -119,7 +119,7 @@ public class Workers implements Serializable {
 
     @Override
     public String toString() {
-        return "autoszerelo.Workers[ id=" + id + " ]";
+        return "[" + id + "] " + name;
     }
     
 }

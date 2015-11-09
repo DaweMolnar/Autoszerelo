@@ -91,7 +91,7 @@ public class Parts implements Serializable {
 
     @Override
     public String toString() {
-        return "autoszerelo.Parts[ id=" + id + " ]";
+        return "[" + id + "]" + name + ": " + price;
     }
     
 }

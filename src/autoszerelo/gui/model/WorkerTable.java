@@ -93,7 +93,7 @@ public class WorkerTable {
                case 1:
                    return p.getAddress();
                case 2:
-                   return p.getId();
+                   return p.getPhone();
                case 3:
                    return p.getWage();
                default:

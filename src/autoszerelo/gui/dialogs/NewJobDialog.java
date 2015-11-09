@@ -5,6 +5,11 @@
  */
 package autoszerelo.gui.dialogs;
 
+import autoszerelo.database.controllers.PartJpaController;
+import autoszerelo.database.controllers.WorkerJpaController;
+import autoszerelo.database.entities.Parts;
+import autoszerelo.database.entities.Workers;
+import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,10 +17,17 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -26,7 +38,7 @@ public class NewJobDialog  extends JDialog{
     private JTextField tf1;
     private JTextField tf2;
     private JTextField tf3;
-    private JTextField tf4;
+    private JComboBox mId;
     private JTextField tf5;
     private JLabel l0;
     private JLabel l1;
@@ -34,12 +46,19 @@ public class NewJobDialog  extends JDialog{
     private JLabel l3;
     private JLabel l4;
     private JLabel l5;
+    private JList li;
+    DefaultListModel partModel;
+    DefaultComboBoxModel mIdModel;
     private boolean sent = false;
     private boolean closed = false;
+    private final PartJpaController partController;
+    private final WorkerJpaController workerController;
     public NewJobDialog(){
+        this.partController = DatabaseEngine.getPartControllerInstance();
+        this.workerController = DatabaseEngine.getWorkerControllerInstance();
         setSize(300, 400);
         setTitle("Munkalap hozzáadása");
-        setLayout(new GridLayout(6, 2));
+        setLayout(new GridLayout(8, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");
@@ -52,8 +71,26 @@ public class NewJobDialog  extends JDialog{
         tf1 = new JTextField();
         tf2 = new JTextField();
         tf3 = new JTextField();
-        tf4 = new JTextField();
+        
+        List<Workers> workers = workerController.findWorkerEntities();
+        mIdModel = new DefaultComboBoxModel();
+        mId = new JComboBox(mIdModel);
+        for(Workers w: workers) {
+            mIdModel.addElement(w);
+        }
         tf5 = new JTextField();
+        
+        JScrollPane scrollPane = new JScrollPane();
+        List<Parts> parts = partController.findPartEntities();
+        partModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        li = new JList(partModel);
+        li.setSelectionModel(m);
+        for (Parts part : parts) {
+            partModel.addElement(part);
+        }
+        scrollPane.setViewportView(li);
         
         add(l0);
         add(tf0);
@@ -64,9 +101,10 @@ public class NewJobDialog  extends JDialog{
         add(l3);
         add(tf3);
         add(l4);
-        add(tf4);
+        add(mId);
         add(l5);
         add(tf5);
+        add(scrollPane);
         
         JButton button = new JButton("Hozzaadas");
         
@@ -116,7 +154,7 @@ public class NewJobDialog  extends JDialog{
     }
     
     public Integer getWorkerId() {
-        return Integer.parseInt(tf4.getText());
+        return ((Workers)mIdModel.getElementAt(mId.getSelectedIndex())).getId();
     }
     
     public Integer getLength() {
@@ -130,6 +168,11 @@ public class NewJobDialog  extends JDialog{
     }
     
     public List<Integer> getParts() {
-        return new ArrayList<Integer>();
+        List<Integer> indexes = new ArrayList<>();
+        int[] li2 = li.getSelectedIndices();
+        for(int i : li2) {
+            indexes.add(((Parts)partModel.getElementAt(i)).getId());
+        }
+        return indexes;
     }
 }

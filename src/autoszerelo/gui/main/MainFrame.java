@@ -99,7 +99,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     Parts p = new Parts();
                     p.setId(dialog.getId());
                     p.setPrice(dialog.getPrice());
-                    p.setName(dialog.getName());
+                    p.setName(dialog.getPartName());
                     pTable.add(p);
                 }
             }
