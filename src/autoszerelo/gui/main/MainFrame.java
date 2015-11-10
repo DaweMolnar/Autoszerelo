@@ -156,6 +156,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     p.setWorkerid(dialog.getWorkerId());
                     p.setState(false);
                     p.setLength(dialog.getLength());
+                    List<Integer> parts = dialog.getParts();
+                    for(Integer part : parts) {
+                        controller.create(new Partusage(null,dialog.getId(),part));
+                    }
                     jTable.modify(p);
                 }
             }

@@ -5,66 +5,138 @@
  */
 package autoszerelo.gui.dialogs;
 
+import autoszerelo.database.controllers.JobJpaController;
+import autoszerelo.database.controllers.PartJpaController;
+import autoszerelo.database.controllers.WorkerJpaController;
+import autoszerelo.database.entities.Job;
+import autoszerelo.database.entities.Parts;
+import autoszerelo.database.entities.Workers;
+import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 /**
  *
  * @author dmolnar
  */
 public class ModifyJobDialog  extends JDialog{
-    private JTextField tf0;
-    private JTextField tf1;
-    private JTextField tf2;
-    private JTextField tf3;
-    private JTextField tf4;
-    private JTextField tf5;
+    List<Integer> partIds;
+    private JComboBox jobId;
+    private JTextField clientName;
+    private JTextField clientAddress;
+    private JTextField licenseNo;
+    private JComboBox mId;
+    private JTextField workLength;
+    DefaultComboBoxModel mIdModel;
+    DefaultComboBoxModel jobIdModel;
+    private final PartJpaController partController;
+    private final WorkerJpaController workerController;
+    private final JobJpaController jobController;
+    private JList li;
+    DefaultListModel partModel;
     private JLabel l0;
     private JLabel l1;
     private JLabel l2;
     private JLabel l3;
     private JLabel l4;
     private JLabel l5;
+    private JLabel l6;
     private boolean sent = false;
     private boolean closed = false;
     public ModifyJobDialog(){
-        setSize(300, 400);
+        partIds = new ArrayList<>();
+        this.partController = DatabaseEngine.getPartControllerInstance();
+        this.workerController = DatabaseEngine.getWorkerControllerInstance();
+        this.jobController = DatabaseEngine.getJobControllerInstance();
+        setSize(350, 500);
         setTitle("Munkalap módosítása");
-        setLayout(new GridLayout(6, 2));
+        setLayout(new GridLayout(8, 2));
         
-        l0 = new JLabel("Id");
+        l0 = new JLabel("Munkalap");
         l1 = new JLabel("Név");
         l2 = new JLabel("Cím");
         l3 = new JLabel("Rendszám");
         l4 = new JLabel("MunkatársID");
         l5 = new JLabel("Munka hossza");
        
-        tf0 = new JTextField();
-        tf1 = new JTextField();
-        tf2 = new JTextField();
-        tf3 = new JTextField();
-        tf4 = new JTextField();
-        tf5 = new JTextField();
+        jobId = new JComboBox();
+        clientName = new JTextField();
+        clientAddress = new JTextField();
+        licenseNo = new JTextField();
+        
+        List<Workers> workers = workerController.findWorkerEntities();
+        mIdModel = new DefaultComboBoxModel();
+        mId = new JComboBox(mIdModel);
+        for(Workers w: workers) {
+            mIdModel.addElement(w);
+        }
+        
+        List<Job> jobs = jobController.findJobEntities();
+        jobIdModel = new DefaultComboBoxModel();
+        jobId = new JComboBox(jobIdModel);
+        for(Job j: jobs) {
+            jobIdModel.addElement(j);
+        }
+        jobId.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateIdSelection();
+            }
+        });
+        workLength = new JTextField();
+        
+        
+        JScrollPane scrollPane = new JScrollPane();
+        List<Parts> parts = partController.findPartEntities();
+        partModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        li = new JList(partModel);
+        li.setSelectionModel(m);
+        for (Parts part : parts) {
+            partModel.addElement(part);
+        }
+        scrollPane.setViewportView(li);
         
         add(l0);
-        add(tf0);
+        add(jobId);
         add(l1);
-        add(tf1);
+        add(clientName);
         add(l2);
-        add(tf2);
+        add(clientAddress);
         add(l3);
-        add(tf3);
+        add(licenseNo);
         add(l4);
-        add(tf4);
+        add(mId);
         add(l5);
-        add(tf5);
+        add(workLength);
+        
+        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
+        
+        addAlkat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                addAlkatresz();
+            }
+        });
+        add(scrollPane);
+        add(addAlkat);
         
         JButton button = new JButton("Modositas");
         
@@ -87,10 +159,27 @@ public class ModifyJobDialog  extends JDialog{
                 setVisible(false);
             }
         });
-        
+        updateIdSelection();
         setModal(true);
         setVisible(true);
         
+    }
+    
+    public void addAlkatresz() {
+        int[] li2 = li.getSelectedIndices();
+        for(int i : li2) {
+            partIds.add(((Parts)partModel.getElementAt(i)).getId());
+        }
+        li.clearSelection();
+    }
+
+    public final void updateIdSelection() {
+       Job job = (Job)jobIdModel.getElementAt(jobId.getSelectedIndex());
+       workLength.setText(Integer.toString(job.getLength()));
+       clientName.setText(job.getClientname());
+       clientAddress.setText(job.getAddress());
+       licenseNo.setText(job.getLicenseNo());
+       mId.setSelectedIndex(mIdModel.getIndexOf(workerController.findWorker(job.getWorkerid())));
     }
     
     public boolean isClosed(){
@@ -102,26 +191,30 @@ public class ModifyJobDialog  extends JDialog{
     }
     
     public String getClientName(){
-        return tf1.getText();
+        return clientName.getText();
     }
     
     public String getAddress(){
-        return tf2.getText();
+        return clientAddress.getText();
     }
     
     public String getPlateNumber(){
-        return tf3.getText();
+        return licenseNo.getText();
     }
     
     public Integer getWorkerId() {
-        return Integer.parseInt(tf4.getText());
+        return ((Workers)mIdModel.getElementAt(mId.getSelectedIndex())).getId();
     }
     
     public Integer getLength() {
-        return Integer.parseInt(tf5.getText());
+        return Integer.parseInt(workLength.getText());
     }
 
     public Integer getId() {
-        return Integer.parseInt(tf0.getText());
+        return ((Job)jobIdModel.getElementAt(jobId.getSelectedIndex())).getId();
+    }
+    
+    public List<Integer> getParts() {
+        return partIds;
     }
 }

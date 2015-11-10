@@ -34,6 +34,8 @@ import javax.swing.ListSelectionModel;
  * @author dmolnar
  */
 public class NewJobDialog  extends JDialog{
+    List<Integer> partIds;
+    
     private JTextField tf0;
     private JTextField tf1;
     private JTextField tf2;
@@ -54,6 +56,7 @@ public class NewJobDialog  extends JDialog{
     private final PartJpaController partController;
     private final WorkerJpaController workerController;
     public NewJobDialog(){
+        partIds = new ArrayList<>();
         this.partController = DatabaseEngine.getPartControllerInstance();
         this.workerController = DatabaseEngine.getWorkerControllerInstance();
         setSize(300, 450);
@@ -104,8 +107,18 @@ public class NewJobDialog  extends JDialog{
         add(mId);
         add(l5);
         add(tf5);
-        add(scrollPane);
+
+        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
         
+        addAlkat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                addAlkatresz();
+            }
+        });
+        add(scrollPane);
+        add(addAlkat);
+
         JButton button = new JButton("Hozzaadas");
         
         button.addActionListener(new ActionListener() {
@@ -132,6 +145,15 @@ public class NewJobDialog  extends JDialog{
         setVisible(true);
         
     }
+    
+    public void addAlkatresz() {
+        int[] li2 = li.getSelectedIndices();
+        for(int i : li2) {
+            partIds.add(((Parts)partModel.getElementAt(i)).getId());
+        }
+        li.clearSelection();
+    }
+            
     
     public boolean isClosed(){
         return closed;
@@ -168,11 +190,6 @@ public class NewJobDialog  extends JDialog{
     }
     
     public List<Integer> getParts() {
-        List<Integer> indexes = new ArrayList<>();
-        int[] li2 = li.getSelectedIndices();
-        for(int i : li2) {
-            indexes.add(((Parts)partModel.getElementAt(i)).getId());
-        }
-        return indexes;
+        return partIds;
     }
 }
