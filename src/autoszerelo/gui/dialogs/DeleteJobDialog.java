@@ -5,31 +5,45 @@
  */
 package autoszerelo.gui.dialogs;
 
+import autoszerelo.database.controllers.JobJpaController;
+import autoszerelo.database.entities.Job;
+import autoszerelo.database.entities.Workers;
+import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 /**
  *
  * @author dmolnar
  */
 public class DeleteJobDialog extends JDialog {
+    private final JobJpaController controller;
+    DefaultComboBoxModel jobModel;
     private boolean deleted = false;
     private boolean closed = false;
-    private JTextField tf0;
+    private JComboBox tf0;
     private JLabel l0;
     public DeleteJobDialog() {
-        setSize(300, 400);
+        this.controller = DatabaseEngine.getJobControllerInstance();
+        setSize(500, 50);
         setTitle("Munkalap törlése");
-        setLayout(new GridLayout(6, 2));
+        setLayout(new GridLayout(1, 3));
         
         l0 = new JLabel("Id");
-        tf0 = new JTextField();
+        List<Job> jobs = controller.findJobEntities();
+        jobModel = new DefaultComboBoxModel();
+        tf0 = new JComboBox(jobModel);
+        for(Job j: jobs) {
+            jobModel.addElement(j);
+        }
         add(l0);
         add(tf0);
         JButton button = new JButton("Torles");
@@ -57,7 +71,7 @@ public class DeleteJobDialog extends JDialog {
         setVisible(true);
     }
     public Integer getId() {
-        return Integer.parseInt(tf0.getText());
+        return ((Job)jobModel.getElementAt(tf0.getSelectedIndex())).getId();
     }
     public boolean isDeleted() {
         return deleted;

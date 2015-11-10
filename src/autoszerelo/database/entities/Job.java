@@ -153,7 +153,7 @@ public class Job implements Serializable {
 
     @Override
     public String toString() {
-        return "autoszerelo.Job[ id=" + id + " ]";
+        return "[" + id + "] Kliens: " + clientname;
     }
     
 }

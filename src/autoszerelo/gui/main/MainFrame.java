@@ -44,8 +44,8 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     public MainFrame() {
         controller = DatabaseEngine.getPartUsageControllerInstance();
         setTitle("Autoszerelo");
-        setSize(new Dimension(300,400));
-        setLayout(new GridLayout(2,1));
+        setSize(new Dimension(600,400));
+        setLayout(new GridLayout(1,1));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         wTable = new WorkerTable(this);

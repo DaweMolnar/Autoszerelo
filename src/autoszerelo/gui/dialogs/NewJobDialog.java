@@ -56,7 +56,7 @@ public class NewJobDialog  extends JDialog{
     public NewJobDialog(){
         this.partController = DatabaseEngine.getPartControllerInstance();
         this.workerController = DatabaseEngine.getWorkerControllerInstance();
-        setSize(300, 400);
+        setSize(300, 450);
         setTitle("Munkalap hozzáadása");
         setLayout(new GridLayout(8, 2));
         
