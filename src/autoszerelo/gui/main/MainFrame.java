@@ -5,9 +5,12 @@
  */
 package autoszerelo.gui.main;
 
+import autoszerelo.database.controllers.PartUsageJpaController;
 import autoszerelo.database.entities.Job;
 import autoszerelo.database.entities.Parts;
+import autoszerelo.database.entities.Partusage;
 import autoszerelo.database.entities.Workers;
+import autoszerelo.database.util.DatabaseEngine;
 import autoszerelo.gui.dialogs.DeleteJobDialog;
 import autoszerelo.gui.dialogs.FinalizeJobDialog;
 import autoszerelo.gui.dialogs.ModifyJobDialog;
@@ -20,6 +23,7 @@ import autoszerelo.gui.model.WorkerTable;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -36,8 +40,9 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     private WorkerTable wTable;
     private JobTable jTable;
     private PartTable pTable;
-    
+    private final PartUsageJpaController controller;
     public MainFrame() {
+        controller = DatabaseEngine.getPartUsageControllerInstance();
         setTitle("Autoszerelo");
         setSize(new Dimension(300,400));
         setLayout(new GridLayout(2,1));
@@ -85,6 +90,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     p.setDate(dialog.getDate());
                     p.setState(false);
                     p.setLength(dialog.getLength());
+                    List<Integer> parts = dialog.getParts();
+                    for(Integer part : parts) {
+                        controller.create(new Partusage(null,dialog.getId(),part));
+                    }
                     jTable.add(p);
                 }
             }

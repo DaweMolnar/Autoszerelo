@@ -59,7 +59,7 @@ public class JobTable {
         Integer price = new Integer(0);
         Job j = controller.findJob(id);
         for(Partusage p : partUsagecontroller.findPartUsageByJobId(id)) {
-            price += partController.findPart(id).getPrice();
+            price += partController.findPart(p.getPartid()).getPrice();
         }
         price += workerController.findWorker(j.getWorkerid()).getWage()*j.getLength();
         return price;
