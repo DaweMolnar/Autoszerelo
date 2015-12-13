@@ -7,9 +7,11 @@ package autoszerelo.gui.dialogs;
 
 import autoszerelo.database.controllers.JobJpaController;
 import autoszerelo.database.controllers.PartJpaController;
+import autoszerelo.database.controllers.PartUsageJpaController;
 import autoszerelo.database.controllers.WorkerJpaController;
 import autoszerelo.database.entities.Job;
 import autoszerelo.database.entities.Parts;
+import autoszerelo.database.entities.Partusage;
 import autoszerelo.database.entities.Workers;
 import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
@@ -48,8 +50,11 @@ public class ModifyJobDialog  extends JDialog{
     private final PartJpaController partController;
     private final WorkerJpaController workerController;
     private final JobJpaController jobController;
+    private final PartUsageJpaController partusageController;
     private JList li;
+    private JList selectedPartsli;
     DefaultListModel partModel;
+    DefaultListModel selectedPartModel;
     private JLabel l0;
     private JLabel l1;
     private JLabel l2;
@@ -64,9 +69,10 @@ public class ModifyJobDialog  extends JDialog{
         this.partController = DatabaseEngine.getPartControllerInstance();
         this.workerController = DatabaseEngine.getWorkerControllerInstance();
         this.jobController = DatabaseEngine.getJobControllerInstance();
+        this.partusageController = DatabaseEngine.getPartUsageControllerInstance();
         setSize(350, 500);
         setTitle("Munkalap módosítása");
-        setLayout(new GridLayout(8, 2));
+        setLayout(new GridLayout(9, 2));
         
         l0 = new JLabel("Munkalap");
         l1 = new JLabel("Név");
@@ -137,6 +143,8 @@ public class ModifyJobDialog  extends JDialog{
         });
         add(scrollPane);
         add(addAlkat);
+        initPartList();
+        addPartRemoval();
         
         JButton button = new JButton("Modositas");
         
@@ -164,12 +172,57 @@ public class ModifyJobDialog  extends JDialog{
         setVisible(true);
         
     }
+    public void initPartList() {
+        partIds.clear();
+        List<Partusage> usages = partusageController.findPartUsageByJobId(getId());
+        for(Partusage usage : usages) {
+            partIds.add(usage.getPartid());
+        }
+    }
+    public final void addPartRemoval() {
+        JScrollPane scrollPane = new JScrollPane();
+        selectedPartModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        selectedPartsli = new JList(selectedPartModel);
+        selectedPartsli.setSelectionModel(m);
+        updateSelectedParts();
+        scrollPane.setViewportView(selectedPartsli);
+        add(scrollPane);
+        JButton button = new JButton("Alkatresz Torlese");
+        
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                removeAlkatresz();
+            }
+        });
+        add(button);
+    }
+    
+    public void updateSelectedParts() {
+         List<Parts> parts = partController.findPartEntities();
+         selectedPartModel.clear();
+         for (Integer partId : partIds) {
+            selectedPartModel.addElement(partController.findPart(partId));
+        }
+    }
+    
+    public void removeAlkatresz() {
+        int[] li2 = selectedPartsli.getSelectedIndices();
+        for(int i : li2) {
+            partIds.remove(((Parts)selectedPartModel.getElementAt(i)).getId());
+        }
+        updateSelectedParts();
+        selectedPartsli.clearSelection();
+    }
     
     public void addAlkatresz() {
         int[] li2 = li.getSelectedIndices();
         for(int i : li2) {
             partIds.add(((Parts)partModel.getElementAt(i)).getId());
         }
+        updateSelectedParts();
         li.clearSelection();
     }
 
@@ -180,6 +233,8 @@ public class ModifyJobDialog  extends JDialog{
        clientAddress.setText(job.getAddress());
        licenseNo.setText(job.getLicenseNo());
        mId.setSelectedIndex(mIdModel.getIndexOf(workerController.findWorker(job.getWorkerid())));
+       initPartList();
+       updateSelectedParts();
     }
     
     public boolean isClosed(){

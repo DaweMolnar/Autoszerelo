@@ -7,7 +7,6 @@ package autoszerelo.gui.dialogs;
 
 import autoszerelo.database.controllers.JobJpaController;
 import autoszerelo.database.entities.Job;
-import autoszerelo.database.entities.Workers;
 import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -29,8 +28,8 @@ public class DeleteJobDialog extends JDialog {
     DefaultComboBoxModel jobModel;
     private boolean deleted = false;
     private boolean closed = false;
-    private JComboBox tf0;
-    private JLabel l0;
+    private final JComboBox tf0;
+    private final JLabel l0;
     public DeleteJobDialog() {
         this.controller = DatabaseEngine.getJobControllerInstance();
         setSize(500, 50);

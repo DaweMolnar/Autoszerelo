@@ -51,9 +51,9 @@ public class PartJpaController {
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = part.getId();
-                //if (findPatient(id) == null) {
-                  //  throw new NonexistentEntityException("The patient with id " + id + " no longer exists.");
-                //}
+                if (findPart(id) == null) {
+                    throw new EntityNotFoundException("The Part with id " + id + " no longer exists.");
+                }
             }
             throw ex;
         } finally {
@@ -74,7 +74,6 @@ public class PartJpaController {
                 part.getId();
             } catch (EntityNotFoundException enfe) {
                 throw enfe;
-                //throw new NonexistentEntityException("The patient with id " + id + " no longer exists.", enfe);
             }
             em.remove(part);
             em.getTransaction().commit();

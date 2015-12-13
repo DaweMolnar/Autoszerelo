@@ -29,7 +29,7 @@ public class JobTable {
     private final PartUsageJpaController partUsagecontroller;
     private final PartJpaController partController;
     private final JobTableInterface cb; 
-    private JTable table;
+    private final JTable table;
     private InnerTable innerTable;
     
     public JobTable(JobTableInterface cb) {
@@ -86,12 +86,17 @@ public class JobTable {
     public Component getTable(){
         return table;
     }
+    public void removeAlkatresz(Integer id) {
+            for(Partusage u : partUsagecontroller.findPartUsageByJobId(id)) {
+                partUsagecontroller.destroy(u.getId());
+            }
+            innerTable.fireTableDataChanged();
+    }
     public void remove(Integer id){
         //try{
             for(Partusage u : partUsagecontroller.findPartUsageByJobId(id)) {
                 partUsagecontroller.destroy(u.getId());
             }
-            //TODO remove from partusage table
             controller.destroy(id);
             innerTable.remove(id);
             innerTable.fireTableDataChanged();

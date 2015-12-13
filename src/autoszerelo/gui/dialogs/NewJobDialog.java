@@ -49,7 +49,9 @@ public class NewJobDialog  extends JDialog{
     private JLabel l4;
     private JLabel l5;
     private JList li;
+    private JList selectedPartsli;
     DefaultListModel partModel;
+    DefaultListModel selectedPartModel;
     DefaultComboBoxModel mIdModel;
     private boolean sent = false;
     private boolean closed = false;
@@ -61,7 +63,7 @@ public class NewJobDialog  extends JDialog{
         this.workerController = DatabaseEngine.getWorkerControllerInstance();
         setSize(300, 450);
         setTitle("Munkalap hozzáadása");
-        setLayout(new GridLayout(8, 2));
+        setLayout(new GridLayout(9, 2));
         
         l0 = new JLabel("Id");
         l1 = new JLabel("Név");
@@ -119,6 +121,7 @@ public class NewJobDialog  extends JDialog{
         add(scrollPane);
         add(addAlkat);
 
+        addPartRemoval();
         JButton button = new JButton("Hozzaadas");
         
         button.addActionListener(new ActionListener() {
@@ -145,12 +148,51 @@ public class NewJobDialog  extends JDialog{
         setVisible(true);
         
     }
+
+    public final void addPartRemoval() {
+        JScrollPane scrollPane = new JScrollPane();
+        selectedPartModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        selectedPartsli = new JList(selectedPartModel);
+        selectedPartsli.setSelectionModel(m);
+        updateSelectedParts();
+        scrollPane.setViewportView(selectedPartsli);
+        add(scrollPane);
+        JButton button = new JButton("Alkatresz Torlese");
+        
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                removeAlkatresz();
+            }
+        });
+        add(button);
+    }
+    
+    public void updateSelectedParts() {
+         List<Parts> parts = partController.findPartEntities();
+         selectedPartModel.clear();
+         for (Integer partId : partIds) {
+            selectedPartModel.addElement(partController.findPart(partId));
+        }
+    }
+    
+    public void removeAlkatresz() {
+        int[] li2 = selectedPartsli.getSelectedIndices();
+        for(int i : li2) {
+            partIds.remove(((Parts)selectedPartModel.getElementAt(i)).getId());
+        }
+        updateSelectedParts();
+        selectedPartsli.clearSelection();
+    }
     
     public void addAlkatresz() {
         int[] li2 = li.getSelectedIndices();
         for(int i : li2) {
             partIds.add(((Parts)partModel.getElementAt(i)).getId());
         }
+        updateSelectedParts();
         li.clearSelection();
     }
             

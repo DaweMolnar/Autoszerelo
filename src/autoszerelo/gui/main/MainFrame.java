@@ -37,9 +37,9 @@ import javax.swing.JTabbedPane;
  * @author dmolnar
  */
 public class MainFrame extends JFrame implements WorkerTableInterface, JobTableInterface{
-    private WorkerTable wTable;
-    private JobTable jTable;
-    private PartTable pTable;
+    private final WorkerTable wTable;
+    private final JobTable jTable;
+    private final PartTable pTable;
     private final PartUsageJpaController controller;
     public MainFrame() {
         controller = DatabaseEngine.getPartUsageControllerInstance();
@@ -57,6 +57,29 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
 
         JMenuBar menubar = new JMenuBar();
         JMenu menu = new JMenu("Hozzaadas");
+        addAddMunkatarsMenu(menu);
+        addAddMunkalapMenu(menu); //TODO check
+        addAddAlkatreszMenu(menu); //TODO check
+
+        JMenu menu2 = new JMenu("Torles");
+        addTorolMunkalapMenu(menu2); //TODO check
+
+        JMenu menu3 = new JMenu("Veglegesit");
+        addVeglegesitMenu(menu3); //TODO check
+
+        
+        JMenu menu4 = new JMenu("Modositas");
+        addModositMenu(menu4); //TODO check
+        
+        menubar.add(menu);
+        menubar.add(menu2);
+        menubar.add(menu3);
+        menubar.add(menu4);
+        setJMenuBar(menubar);
+        add(tabbedPane);
+    }
+    
+    private void addAddMunkatarsMenu(JMenu menu) {
         JMenuItem item = new JMenuItem("Add munkatars");
         
         item.addActionListener(new AbstractAction() {
@@ -75,6 +98,9 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item);
+    }
+    
+    private void addAddMunkalapMenu(JMenu menu) {
         JMenuItem item2 = new JMenuItem("Add munkalap");
         item2.addActionListener(new AbstractAction() {
             @Override
@@ -99,6 +125,9 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item2);
+    }
+    
+    private void addAddAlkatreszMenu(JMenu menu) {
         JMenuItem item3 = new JMenuItem("Add Alkatrész");
         item3.addActionListener(new AbstractAction() {
             @Override
@@ -114,8 +143,9 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             }
         });
         menu.add(item3);
-        
-        JMenu menu2 = new JMenu("Torles");
+    }
+    
+    private void addTorolMunkalapMenu(JMenu menu) {
         JMenuItem item4 = new JMenuItem("Torol Munkalap");
         item4.addActionListener(new AbstractAction() {
             @Override
@@ -127,8 +157,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu2.add(item4);
-        JMenu menu3 = new JMenu("Veglegesit");
+        menu.add(item4);
+    }
+    
+    private void addVeglegesitMenu(JMenu menu) {
         JMenuItem item5 = new JMenuItem("Munkalap veglegesitese");
         item5.addActionListener(new AbstractAction() {
             @Override
@@ -139,9 +171,10 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu3.add(item5);
-        
-        JMenu menu4 = new JMenu("Modositas");
+        menu.add(item5);
+    }
+    
+    private void addModositMenu(JMenu menu) {
         JMenuItem item6 = new JMenuItem("Munkalap modositasa");
         item6.addActionListener(new AbstractAction() {
             @Override
@@ -157,6 +190,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     p.setState(false);
                     p.setLength(dialog.getLength());
                     List<Integer> parts = dialog.getParts();
+                    jTable.removeAlkatresz(p.getId());
                     for(Integer part : parts) {
                         controller.create(new Partusage(null,dialog.getId(),part));
                     }
@@ -164,14 +198,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu4.add(item6);
-        
-        menubar.add(menu);
-        menubar.add(menu2);
-        menubar.add(menu3);
-        menubar.add(menu4);
-        setJMenuBar(menubar);
-        add(tabbedPane);
+        menu.add(item6);
     }
     
     @Override

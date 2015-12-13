@@ -5,8 +5,6 @@
  */
 package autoszerelo.database.entities;
 
-import autoszerelo.database.controllers.PartUsageJpaController;
-import autoszerelo.database.util.DatabaseEngine;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -145,10 +143,7 @@ public class Job implements Serializable {
             return false;
         }
         Job other = (Job) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override

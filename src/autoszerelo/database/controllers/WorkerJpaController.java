@@ -52,9 +52,9 @@ public class WorkerJpaController implements Serializable{
             String msg = ex.getLocalizedMessage();
             if (msg == null || msg.length() == 0) {
                 Integer id = worker.getId();
-                //if (findPatient(id) == null) {
-                  //  throw new NonexistentEntityException("The patient with id " + id + " no longer exists.");
-                //}
+                if (findWorker(id) == null) {
+                    throw new EntityNotFoundException("The worker with id " + id + " no longer exists.");
+                }
             }
             throw ex;
         } finally {
@@ -75,7 +75,6 @@ public class WorkerJpaController implements Serializable{
                 worker.getId();
             } catch (EntityNotFoundException enfe) {
                 throw enfe;
-                //throw new NonexistentEntityException("The patient with id " + id + " no longer exists.", enfe);
             }
             em.remove(worker);
             em.getTransaction().commit();

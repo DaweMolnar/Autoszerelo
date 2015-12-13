@@ -10,7 +10,10 @@
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/entities/Partusage.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/main/MainFrame.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/util/DatabaseEngine.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/entities/Workers.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/controllers/PartJpaController.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/main/JobTableInterface.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/controllers/PartUsageJpaController.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/entities/Parts.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/dialogs/NewJobDialog.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/controllers/WorkerJpaController.java</file>
@@ -18,7 +21,10 @@
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/database/controllers/JobJpaController.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/dialogs/FinalizeJobDialog.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/main/WorkerTableInterface.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/dialogs/ModifyJobDialog.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/model/PartTable.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/Autoszerelo.java</file>
+            <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/dialogs/NewPartDialog.java</file>
             <file>file:/home/dmolnar/NetBeansProjects/Autoszerelo/src/autoszerelo/gui/dialogs/NewWorkerDialog.java</file>
         </group>
     </open-files>
