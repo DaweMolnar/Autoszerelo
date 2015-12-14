@@ -23,6 +23,8 @@ import autoszerelo.gui.model.WorkerTable;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -37,9 +39,9 @@ import javax.swing.JTabbedPane;
  * @author dmolnar
  */
 public class MainFrame extends JFrame implements WorkerTableInterface, JobTableInterface{
-    private final WorkerTable wTable;
-    private final JobTable jTable;
-    private final PartTable pTable;
+    private WorkerTable wTable = null;
+    private JobTable jTable;
+    private PartTable pTable;
     private final PartUsageJpaController controller;
     public MainFrame() {
         controller = DatabaseEngine.getPartUsageControllerInstance();
@@ -47,25 +49,30 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
         setSize(new Dimension(600,400));
         setLayout(new GridLayout(1,1));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        wTable = new WorkerTable(this);
-        jTable = new JobTable(this);
-        pTable = new PartTable();
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.add("Dolgozok",new JScrollPane(wTable.getTable()));
-        tabbedPane.add("Munkalapok",new JScrollPane(jTable.getTable()));
-
+        try {
+            wTable = new WorkerTable(this);
+            jTable = new JobTable(this);
+            pTable = new PartTable();
+            tabbedPane.add("Dolgozok",new JScrollPane(wTable.getTable()));
+            tabbedPane.add("Munkalapok",new JScrollPane(jTable.getTable()));
+        } catch(Exception e) {
+            System.err.println(e.getMessage());
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            System.exit(-1);
+        }
+        add(tabbedPane);
         JMenuBar menubar = new JMenuBar();
         JMenu menu = new JMenu("Hozzaadas");
         addAddMunkatarsMenu(menu);
         addAddMunkalapMenu(menu); //TODO check
-        addAddAlkatreszMenu(menu); //TODO check
+        addAddAlkatreszMenu(menu);
 
         JMenu menu2 = new JMenu("Torles");
-        addTorolMunkalapMenu(menu2); //TODO check
+        addTorolMunkalapMenu(menu2);
 
         JMenu menu3 = new JMenu("Veglegesit");
-        addVeglegesitMenu(menu3); //TODO check
+        addVeglegesitMenu(menu3);
 
         
         JMenu menu4 = new JMenu("Modositas");
@@ -76,7 +83,6 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
         menubar.add(menu3);
         menubar.add(menu4);
         setJMenuBar(menubar);
-        add(tabbedPane);
     }
     
     private void addAddMunkatarsMenu(JMenu menu) {
@@ -128,8 +134,8 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     }
     
     private void addAddAlkatreszMenu(JMenu menu) {
-        JMenuItem item3 = new JMenuItem("Add Alkatrész");
-        item3.addActionListener(new AbstractAction() {
+        JMenuItem item = new JMenuItem("Add Alkatrész");
+        item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
             NewPartDialog dialog = new NewPartDialog();
@@ -142,12 +148,12 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu.add(item3);
+        menu.add(item);
     }
     
     private void addTorolMunkalapMenu(JMenu menu) {
-        JMenuItem item4 = new JMenuItem("Torol Munkalap");
-        item4.addActionListener(new AbstractAction() {
+        JMenuItem item = new JMenuItem("Torol Munkalap");
+        item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
             DeleteJobDialog dialog = new DeleteJobDialog();
@@ -157,12 +163,12 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu.add(item4);
+        menu.add(item);
     }
     
     private void addVeglegesitMenu(JMenu menu) {
-        JMenuItem item5 = new JMenuItem("Munkalap veglegesitese");
-        item5.addActionListener(new AbstractAction() {
+        JMenuItem item = new JMenuItem("Munkalap veglegesitese");
+        item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
             FinalizeJobDialog dialog = new FinalizeJobDialog();
@@ -171,7 +177,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu.add(item5);
+        menu.add(item);
     }
     
     private void addModositMenu(JMenu menu) {

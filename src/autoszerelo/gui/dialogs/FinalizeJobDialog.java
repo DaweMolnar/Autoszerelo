@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,6 +29,7 @@ public class FinalizeJobDialog extends JDialog {
     DefaultComboBoxModel jobModel;
     private boolean finalized = false;
     private boolean closed = false;
+    private String dialogError = "";
     private JComboBox tf0;
     private JLabel l0;
     public FinalizeJobDialog() {
@@ -49,11 +51,13 @@ public class FinalizeJobDialog extends JDialog {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                closed = true;
-                //elĂŠg csak bezĂĄrni mert a gui automatikusan megvizsgĂĄlja az ĂŠrtĂŠkeit
-                finalized = true;
-                setVisible(false);
-                
+                if(formValid()) {
+                    closed = true;
+                    finalized = true;
+                    setVisible(false);
+                } else {
+                    showErrorDialog();
+                }
             }
         });
         add(button);
@@ -61,14 +65,45 @@ public class FinalizeJobDialog extends JDialog {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent winEvt) {
-                closed = true;
-                setVisible(false);
+                    closed = true;
+                    setVisible(false);
             }
         });
         
         setModal(true);
         setVisible(true);
     }
+    
+    private void showErrorDialog() {
+        JOptionPane.showMessageDialog(this,
+        dialogError,
+        "Véglegesítési hiba",
+        JOptionPane.ERROR_MESSAGE);
+    }
+    private boolean formValid() {
+        Job j = (Job)jobModel.getElementAt(tf0.getSelectedIndex());
+        if(j.getAddress().isEmpty()) {
+            dialogError = "A cím mező üres, nem lehet lezárni a kiválasztott munkalapot";
+            return false;
+        }
+        if(j.getClientname().isEmpty()) {
+            dialogError = "A kliens neve mező üres, nem lehet lezárni a kiválasztott munkalapot";
+            return false;
+        }
+        if(j.getLength()==0) {
+            dialogError = "A munka hossza 0, nem lehet lezárni a kiválasztott munkalapot";
+            return false;
+        }
+        if(j.getLicenseNo().isEmpty()) {
+            dialogError = "A rendszám mező üres, nem lehet lezárni a kiválasztott munkalapot";
+            return false;
+        }
+        if(j.getState()==true) {
+            dialogError = "A kiválasztott munkalap már le van zárva";
+            return false;
+        }
+        return true;
+    }    
     public Integer getId() {
         return ((Job)jobModel.getElementAt(tf0.getSelectedIndex())).getId();
     }

@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,32 +29,35 @@ public class DeleteJobDialog extends JDialog {
     DefaultComboBoxModel jobModel;
     private boolean deleted = false;
     private boolean closed = false;
-    private final JComboBox tf0;
-    private final JLabel l0;
+    private String dialogError = "";
+    private final JComboBox idField;
+    private final JLabel idLabel;
     public DeleteJobDialog() {
         this.controller = DatabaseEngine.getJobControllerInstance();
         setSize(500, 50);
         setTitle("Munkalap törlése");
         setLayout(new GridLayout(1, 3));
         
-        l0 = new JLabel("Id");
+        idLabel = new JLabel("Id");
         List<Job> jobs = controller.findJobEntities();
         jobModel = new DefaultComboBoxModel();
-        tf0 = new JComboBox(jobModel);
+        idField = new JComboBox(jobModel);
         for(Job j: jobs) {
             jobModel.addElement(j);
         }
-        add(l0);
-        add(tf0);
+        add(idLabel);
+        add(idField);
         JButton button = new JButton("Torles");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                closed = true;
-                //elĂŠg csak bezĂĄrni mert a gui automatikusan megvizsgĂĄlja az ĂŠrtĂŠkeit
-                deleted = true;
-                setVisible(false);
-                
+                if(formValid()) {
+                    closed = true;
+                    deleted = true;
+                    setVisible(false);
+                } else {
+                    showErrorDialog();
+                }
             }
         });
         add(button);
@@ -69,8 +73,24 @@ public class DeleteJobDialog extends JDialog {
         setModal(true);
         setVisible(true);
     }
+    private void showErrorDialog() {
+        JOptionPane.showMessageDialog(this,
+        dialogError,
+        "Törlési hiba",
+        JOptionPane.ERROR_MESSAGE);
+    }
+
+    private boolean formValid() {
+        Job j = (Job)jobModel.getElementAt(idField.getSelectedIndex());
+        if(j.getState()==true) {
+            dialogError = "A Munkalap már ki van fizetve, így nem törölhető";
+            return false;
+        }
+        return true;
+    }
+    
     public Integer getId() {
-        return ((Job)jobModel.getElementAt(tf0.getSelectedIndex())).getId();
+        return ((Job)jobModel.getElementAt(idField.getSelectedIndex())).getId();
     }
     public boolean isDeleted() {
         return deleted;

@@ -17,7 +17,12 @@ public class Autoszerelo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new MainFrame().setVisible(true);
+        try {
+            new MainFrame().setVisible(true);
+        } catch(Exception e) {
+            System.err.println(e.getCause());
+            System.exit(-1);
+        }
     }
     
 }

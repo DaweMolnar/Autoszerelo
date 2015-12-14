@@ -22,12 +22,12 @@ import javax.swing.JTextField;
  * @author dmolnar
  */
 public class NewPartDialog extends JDialog{
-    private JTextField nameField;
-    private JTextField priceField;
-    private JTextField idField;
-    private JLabel idLabel;
-    private JLabel nameLabel;
-    private JLabel priceLabel;
+    private final JTextField nameField;
+    private final JTextField priceField;
+    private final JTextField idField;
+    private final JLabel idLabel;
+    private final JLabel nameLabel;
+    private final JLabel priceLabel;
     private String dialogError = "";
     private final PartJpaController partController;
      private boolean sent = false;
@@ -110,6 +110,7 @@ public class NewPartDialog extends JDialog{
         }
         return true;
     }
+
     public boolean isClosed(){
         return closed;
     }
