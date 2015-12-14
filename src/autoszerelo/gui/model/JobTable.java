@@ -30,7 +30,7 @@ public class JobTable {
     private final PartJpaController partController;
     private final JobTableInterface cb; 
     private final JTable table;
-    private InnerTable innerTable;
+    private final InnerTable innerTable;
     
     public JobTable(JobTableInterface cb) {
         this.controller = DatabaseEngine.getJobControllerInstance();
@@ -93,23 +93,19 @@ public class JobTable {
             innerTable.fireTableDataChanged();
     }
     public void remove(Integer id){
-        //try{
             for(Partusage u : partUsagecontroller.findPartUsageByJobId(id)) {
                 partUsagecontroller.destroy(u.getId());
             }
             controller.destroy(id);
             innerTable.remove(id);
             innerTable.fireTableDataChanged();
-        //} catch (NonexistentEntityException ex) {
-        //    Logger.getLogger(PatientTable.class.getName()).log(Level.SEVERE, null, ex);
-        //}
     }
 
     private class InnerTable extends AbstractTableModel {
 
         private final String[] columns = {"Id","Dátum","Vevő neve","Teljes ár","Fizetés állapota"};
-        private List<Job> data = new ArrayList<>();
-        private List<Integer> price = new ArrayList<>();
+        private final List<Job> data = new ArrayList<>();
+        private final List<Integer> price = new ArrayList<>();
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {

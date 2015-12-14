@@ -29,6 +29,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -40,11 +41,11 @@ import javax.swing.ListSelectionModel;
 public class ModifyJobDialog  extends JDialog{
     List<Integer> partIds;
     private JComboBox jobId;
-    private JTextField clientName;
-    private JTextField clientAddress;
-    private JTextField licenseNo;
+    private final JTextField clientName;
+    private final JTextField addressField;
+    private final JTextField licenseField;
     private JComboBox mId;
-    private JTextField workLength;
+    private final JTextField lengthField;
     DefaultComboBoxModel mIdModel;
     DefaultComboBoxModel jobIdModel;
     private final PartJpaController partController;
@@ -55,15 +56,17 @@ public class ModifyJobDialog  extends JDialog{
     private JList selectedPartsli;
     DefaultListModel partModel;
     DefaultListModel selectedPartModel;
-    private JLabel l0;
-    private JLabel l1;
-    private JLabel l2;
-    private JLabel l3;
-    private JLabel l4;
-    private JLabel l5;
-    private JLabel l6;
+    private final JLabel munkalapLabel;
+    private final JLabel nameLabel;
+    private final JLabel addressLabel;
+    private final JLabel licenseLabel;
+    private final JLabel workerLabel;
+    private final JLabel lengthLabel;
+    private String dialogError = "";
     private boolean sent = false;
     private boolean closed = false;
+    
+
     public ModifyJobDialog(){
         partIds = new ArrayList<>();
         this.partController = DatabaseEngine.getPartControllerInstance();
@@ -74,75 +77,37 @@ public class ModifyJobDialog  extends JDialog{
         setTitle("Munkalap módosítása");
         setLayout(new GridLayout(9, 2));
         
-        l0 = new JLabel("Munkalap");
-        l1 = new JLabel("Név");
-        l2 = new JLabel("Cím");
-        l3 = new JLabel("Rendszám");
-        l4 = new JLabel("MunkatársID");
-        l5 = new JLabel("Munka hossza");
+        munkalapLabel = new JLabel("Munkalap");
+        nameLabel = new JLabel("Név");
+        addressLabel = new JLabel("Cím");
+        licenseLabel = new JLabel("Rendszám");
+        workerLabel = new JLabel("MunkatársID");
+        lengthLabel = new JLabel("Munka hossza");
        
         jobId = new JComboBox();
         clientName = new JTextField();
-        clientAddress = new JTextField();
-        licenseNo = new JTextField();
-        
-        List<Workers> workers = workerController.findWorkerEntities();
-        mIdModel = new DefaultComboBoxModel();
-        mId = new JComboBox(mIdModel);
-        for(Workers w: workers) {
-            mIdModel.addElement(w);
+        addressField = new JTextField();
+        licenseField = new JTextField();
+        lengthField = new JTextField();
+
+        addIdSelector();
+        if(jobIdModel.getSize()==0) {
+            dialogError = "Nincs modosithato munkalap";
+            showErrorDialog();
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            return;
         }
-        
-        List<Job> jobs = jobController.findJobEntities();
-        jobIdModel = new DefaultComboBoxModel();
-        jobId = new JComboBox(jobIdModel);
-        for(Job j: jobs) {
-            jobIdModel.addElement(j);
-        }
-        jobId.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateIdSelection();
-            }
-        });
-        workLength = new JTextField();
-        
-        
-        JScrollPane scrollPane = new JScrollPane();
-        List<Parts> parts = partController.findPartEntities();
-        partModel = new DefaultListModel();
-        DefaultListSelectionModel m = new DefaultListSelectionModel();
-        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        li = new JList(partModel);
-        li.setSelectionModel(m);
-        for (Parts part : parts) {
-            partModel.addElement(part);
-        }
-        scrollPane.setViewportView(li);
-        
-        add(l0);
-        add(jobId);
-        add(l1);
+        add(nameLabel);
         add(clientName);
-        add(l2);
-        add(clientAddress);
-        add(l3);
-        add(licenseNo);
-        add(l4);
-        add(mId);
-        add(l5);
-        add(workLength);
+        add(addressLabel);
+        add(addressField);
+        add(licenseLabel);
+        add(licenseField);
+        addWorkerSelector();
+        add(lengthLabel);
+        add(lengthField);
         
-        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
-        
-        addAlkat.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                addAlkatresz();
-            }
-        });
-        add(scrollPane);
-        add(addAlkat);
+        addPartSelector();
         initPartList();
         addPartRemoval();
         
@@ -151,11 +116,13 @@ public class ModifyJobDialog  extends JDialog{
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                closed = true;
-                //elĂŠg csak bezĂĄrni mert a gui automatikusan megvizsgĂĄlja az ĂŠrtĂŠkeit
-                sent = true;
-                setVisible(false);
-                
+                if(formValid()) {
+                    closed = true;
+                    sent = true;
+                    setVisible(false);
+                } else {
+                    showErrorDialog();
+                }  
             }
         });
         add(button);
@@ -172,12 +139,87 @@ public class ModifyJobDialog  extends JDialog{
         setVisible(true);
         
     }
-    public void initPartList() {
+        private void showErrorDialog() {
+        JOptionPane.showMessageDialog(this,
+        dialogError,
+        "Módosítási hiba",
+        JOptionPane.ERROR_MESSAGE);
+    }
+
+    private boolean formValid() {
+        if(lengthField.getText().isEmpty()) {
+            dialogError = "A munka hossza mező nincs kitöltve";
+            return false;
+        }
+        if(!licenseField.getText().isEmpty() && !licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
+            dialogError = "A rendszám nem megfelelő formátum (pl: abc123)";
+            return false;
+        }
+        if(!lengthField.getText().matches("\\d+")) {
+            dialogError = "Az munka hossza nem pozitív szám!";
+            return false;
+        }
+        return true;
+    }
+    
+    private void addIdSelector() {
+        List<Job> jobs = jobController.findOpenJobEntities();
+        jobIdModel = new DefaultComboBoxModel();
+        jobId = new JComboBox(jobIdModel);
+        for(Job j: jobs) {
+            jobIdModel.addElement(j);
+        }
+        jobId.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateIdSelection();
+            }
+        });
+        add(munkalapLabel);
+        add(jobId);
+    }
+
+    private void addWorkerSelector() {
+        List<Workers> workers = workerController.findWorkerEntities();
+        mIdModel = new DefaultComboBoxModel();
+        mId = new JComboBox(mIdModel);
+        for(Workers w: workers) {
+            mIdModel.addElement(w);
+        } 
+        add(workerLabel);
+        add(mId);
+    }
+
+    private void initPartList() {
         partIds.clear();
         List<Partusage> usages = partusageController.findPartUsageByJobId(getId());
         for(Partusage usage : usages) {
             partIds.add(usage.getPartid());
         }
+    }
+    private void addPartSelector() {
+        JScrollPane scrollPane = new JScrollPane();
+        List<Parts> parts = partController.findPartEntities();
+        partModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        li = new JList(partModel);
+        li.setSelectionModel(m);
+        for (Parts part : parts) {
+            partModel.addElement(part);
+        }
+        scrollPane.setViewportView(li);
+        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
+        
+        addAlkat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                addAlkatresz();
+            }
+        });
+        add(scrollPane);
+        add(addAlkat);
+        
     }
     public final void addPartRemoval() {
         JScrollPane scrollPane = new JScrollPane();
@@ -228,10 +270,10 @@ public class ModifyJobDialog  extends JDialog{
 
     public final void updateIdSelection() {
        Job job = (Job)jobIdModel.getElementAt(jobId.getSelectedIndex());
-       workLength.setText(Integer.toString(job.getLength()));
+       lengthField.setText(Integer.toString(job.getLength()));
        clientName.setText(job.getClientname());
-       clientAddress.setText(job.getAddress());
-       licenseNo.setText(job.getLicenseNo());
+       addressField.setText(job.getAddress());
+       licenseField.setText(job.getLicenseNo());
        mId.setSelectedIndex(mIdModel.getIndexOf(workerController.findWorker(job.getWorkerid())));
        initPartList();
        updateSelectedParts();
@@ -250,11 +292,11 @@ public class ModifyJobDialog  extends JDialog{
     }
     
     public String getAddress(){
-        return clientAddress.getText();
+        return addressField.getText();
     }
     
     public String getPlateNumber(){
-        return licenseNo.getText();
+        return licenseField.getText();
     }
     
     public Integer getWorkerId() {
@@ -262,7 +304,7 @@ public class ModifyJobDialog  extends JDialog{
     }
     
     public Integer getLength() {
-        return Integer.parseInt(workLength.getText());
+        return Integer.parseInt(lengthField.getText());
     }
 
     public Integer getId() {

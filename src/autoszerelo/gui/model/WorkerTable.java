@@ -12,8 +12,7 @@ import autoszerelo.gui.main.WorkerTableInterface;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Objects;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -24,8 +23,8 @@ import javax.swing.table.AbstractTableModel;
 public class WorkerTable {
     private final WorkerJpaController controller;
     private final WorkerTableInterface cb; 
-    private JTable table;
-    private InnerTable innerTable;
+    private final JTable table;
+    private final InnerTable innerTable;
     
     public WorkerTable(WorkerTableInterface cb) {
         this.controller = DatabaseEngine.getWorkerControllerInstance();
@@ -50,19 +49,15 @@ public class WorkerTable {
         return table;
     }
     public void remove(Long id){
-        //try{
             controller.destroy(id);
             innerTable.remove(id);
             innerTable.fireTableDataChanged();
-        //} catch (NonexistentEntityException ex) {
-        //    Logger.getLogger(PatientTable.class.getName()).log(Level.SEVERE, null, ex);
-        //}
     }
     
     private class InnerTable extends AbstractTableModel {
 
         private final String[] columns = {"Név","Cím","Telefonszám","Óradíj"};
-        private List<Workers> data = new ArrayList<>();
+        private final List<Workers> data = new ArrayList<>();
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -108,7 +103,7 @@ public class WorkerTable {
 
         private void remove(Long id) {
             for (Workers p : data) {
-                if (p.getId().equals(id)) {
+                if (Objects.equals(p.getId(), id)) {
                     data.remove(p);
                     break;
                 }

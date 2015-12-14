@@ -65,7 +65,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
         JMenuBar menubar = new JMenuBar();
         JMenu menu = new JMenu("Hozzaadas");
         addAddMunkatarsMenu(menu);
-        addAddMunkalapMenu(menu); //TODO check
+        addAddMunkalapMenu(menu);
         addAddAlkatreszMenu(menu);
 
         JMenu menu2 = new JMenu("Torles");
@@ -76,7 +76,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
 
         
         JMenu menu4 = new JMenu("Modositas");
-        addModositMenu(menu4); //TODO check
+        addModositMenu(menu4);
         
         menubar.add(menu);
         menubar.add(menu2);
@@ -107,8 +107,8 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     }
     
     private void addAddMunkalapMenu(JMenu menu) {
-        JMenuItem item2 = new JMenuItem("Add munkalap");
-        item2.addActionListener(new AbstractAction() {
+        JMenuItem item = new JMenuItem("Add munkalap");
+        item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
             NewJobDialog dialog = new NewJobDialog();
@@ -130,7 +130,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu.add(item2);
+        menu.add(item);
     }
     
     private void addAddAlkatreszMenu(JMenu menu) {
@@ -181,8 +181,8 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
     }
     
     private void addModositMenu(JMenu menu) {
-        JMenuItem item6 = new JMenuItem("Munkalap modositasa");
-        item6.addActionListener(new AbstractAction() {
+        JMenuItem item = new JMenuItem("Munkalap modositasa");
+        item.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
             ModifyJobDialog dialog = new ModifyJobDialog();
@@ -204,7 +204,7 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                 }
             }
         });
-        menu.add(item6);
+        menu.add(item);
     }
     
     @Override

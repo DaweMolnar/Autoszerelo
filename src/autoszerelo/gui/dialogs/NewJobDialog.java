@@ -25,6 +25,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -36,20 +37,21 @@ import javax.swing.ListSelectionModel;
 public class NewJobDialog  extends JDialog{
     List<Integer> partIds;
     
-    private JTextField tf0;
-    private JTextField tf1;
-    private JTextField tf2;
-    private JTextField tf3;
+    private final JTextField idField;
+    private final JTextField nameField;
+    private final JTextField addressField;
+    private final JTextField licenseField;
     private JComboBox mId;
-    private JTextField tf5;
-    private JLabel l0;
-    private JLabel l1;
-    private JLabel l2;
-    private JLabel l3;
-    private JLabel l4;
-    private JLabel l5;
-    private JList li;
+    private JTextField lengthField;
+    private final JLabel idLabel;
+    private final JLabel nameLabel;
+    private final JLabel addressLabel;
+    private final JLabel licenseLabel;
+    private final JLabel workerLabel;
+    private final JLabel lengthLabel;
+    private JList allPartList;
     private JList selectedPartsli;
+    private String dialogError = "";
     DefaultListModel partModel;
     DefaultListModel selectedPartModel;
     DefaultComboBoxModel mIdModel;
@@ -57,6 +59,7 @@ public class NewJobDialog  extends JDialog{
     private boolean closed = false;
     private final PartJpaController partController;
     private final WorkerJpaController workerController;
+
     public NewJobDialog(){
         partIds = new ArrayList<>();
         this.partController = DatabaseEngine.getPartControllerInstance();
@@ -65,73 +68,44 @@ public class NewJobDialog  extends JDialog{
         setTitle("Munkalap hozzáadása");
         setLayout(new GridLayout(9, 2));
         
-        l0 = new JLabel("Id");
-        l1 = new JLabel("Név");
-        l2 = new JLabel("Cím");
-        l3 = new JLabel("Rendszám");
-        l4 = new JLabel("MunkatársID");
-        l5 = new JLabel("Munka hossza");
+        idLabel = new JLabel("Id");
+        nameLabel = new JLabel("Név");
+        addressLabel = new JLabel("Cím");
+        licenseLabel = new JLabel("Rendszám");
+        workerLabel = new JLabel("MunkatársID");
+        lengthLabel = new JLabel("Munka hossza");
        
-        tf0 = new JTextField();
-        tf1 = new JTextField();
-        tf2 = new JTextField();
-        tf3 = new JTextField();
+        idField = new JTextField();
+        nameField = new JTextField();
+        addressField = new JTextField();
+        licenseField = new JTextField();
+        lengthField = new JTextField();
         
-        List<Workers> workers = workerController.findWorkerEntities();
-        mIdModel = new DefaultComboBoxModel();
-        mId = new JComboBox(mIdModel);
-        for(Workers w: workers) {
-            mIdModel.addElement(w);
-        }
-        tf5 = new JTextField();
-        
-        JScrollPane scrollPane = new JScrollPane();
-        List<Parts> parts = partController.findPartEntities();
-        partModel = new DefaultListModel();
-        DefaultListSelectionModel m = new DefaultListSelectionModel();
-        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        li = new JList(partModel);
-        li.setSelectionModel(m);
-        for (Parts part : parts) {
-            partModel.addElement(part);
-        }
-        scrollPane.setViewportView(li);
-        
-        add(l0);
-        add(tf0);
-        add(l1);
-        add(tf1);
-        add(l2);
-        add(tf2);
-        add(l3);
-        add(tf3);
-        add(l4);
-        add(mId);
-        add(l5);
-        add(tf5);
-
-        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
-        
-        addAlkat.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                addAlkatresz();
-            }
-        });
-        add(scrollPane);
-        add(addAlkat);
-
+        add(idLabel);
+        add(idField);
+        add(nameLabel);
+        add(nameField);
+        add(addressLabel);
+        add(addressField);
+        add(licenseLabel);
+        add(licenseField);
+        addWorkerSelector();
+        addPartSelector();
         addPartRemoval();
+        add(lengthLabel);
+        add(lengthField);
         JButton button = new JButton("Hozzaadas");
         
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                closed = true;
-                //elĂŠg csak bezĂĄrni mert a gui automatikusan megvizsgĂĄlja az ĂŠrtĂŠkeit
-                sent = true;
-                setVisible(false);
-                
+                if(formValid()) {
+                    closed = true;
+                    sent = true;
+                    setVisible(false);
+                } else {
+                    showErrorDialog();
+                }
             }
         });
         add(button);
@@ -147,6 +121,39 @@ public class NewJobDialog  extends JDialog{
         setModal(true);
         setVisible(true);
         
+    }
+
+    private void showErrorDialog() {
+        JOptionPane.showMessageDialog(this,
+        dialogError,
+        "Hozzaadasi hiba",
+        JOptionPane.ERROR_MESSAGE);
+    }
+
+    private boolean formValid() {
+        if(idField.getText().isEmpty()
+           || lengthField.getText().isEmpty())
+        {
+            dialogError = "A kötelező mezők nincsenek kitöltve (id, hossz)";
+            return false;
+        }
+        if(!licenseField.getText().isEmpty() && !licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
+            dialogError = "A rendszám nem megfelelő formátum (pl: abc123)";
+            return false;
+        }
+        if(!idField.getText().matches("\\d+")) {
+            dialogError = "Az id nem pozitív szám!";
+            return false;
+        }
+        if(!lengthField.getText().matches("\\d+")) {
+            dialogError = "Az munka hossza nem pozitív szám!";
+            return false;
+        }
+        if(workerController.findWorker(Integer.parseInt(idField.getText()))!=null) {
+            dialogError = "Már létezik munkalap az adott id-vel!";
+            return false;
+        }
+        return true;
     }
 
     public final void addPartRemoval() {
@@ -169,7 +176,40 @@ public class NewJobDialog  extends JDialog{
         });
         add(button);
     }
+    private void addWorkerSelector() {
+       List<Workers> workers = workerController.findWorkerEntities();
+        mIdModel = new DefaultComboBoxModel();
+        mId = new JComboBox(mIdModel);
+        for(Workers w: workers) {
+            mIdModel.addElement(w);
+        } 
+        add(workerLabel);
+        add(mId);
+    }
     
+    private void addPartSelector() {
+        JScrollPane alkatreszPane = new JScrollPane();
+        List<Parts> parts = partController.findPartEntities();
+        partModel = new DefaultListModel();
+        DefaultListSelectionModel m = new DefaultListSelectionModel();
+        m.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        allPartList = new JList(partModel);
+        allPartList.setSelectionModel(m);
+        for (Parts part : parts) {
+            partModel.addElement(part);
+        }
+        alkatreszPane.setViewportView(allPartList);
+        JButton addAlkat = new JButton("Alkatreszek hozzaadasa");
+        addAlkat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                addAlkatresz();
+            }
+        });
+        add(alkatreszPane);
+        add(addAlkat);
+    }
+
     public void updateSelectedParts() {
          List<Parts> parts = partController.findPartEntities();
          selectedPartModel.clear();
@@ -188,12 +228,12 @@ public class NewJobDialog  extends JDialog{
     }
     
     public void addAlkatresz() {
-        int[] li2 = li.getSelectedIndices();
+        int[] li2 = allPartList.getSelectedIndices();
         for(int i : li2) {
             partIds.add(((Parts)partModel.getElementAt(i)).getId());
         }
         updateSelectedParts();
-        li.clearSelection();
+        allPartList.clearSelection();
     }
             
     
@@ -206,15 +246,15 @@ public class NewJobDialog  extends JDialog{
     }
     
     public String getClientName(){
-        return tf1.getText();
+        return nameField.getText();
     }
     
     public String getAddress(){
-        return tf2.getText();
+        return addressField.getText();
     }
     
     public String getPlateNumber(){
-        return tf3.getText();
+        return licenseField.getText();
     }
     
     public Integer getWorkerId() {
@@ -222,13 +262,13 @@ public class NewJobDialog  extends JDialog{
     }
     
     public Integer getLength() {
-        return Integer.parseInt(tf5.getText());
+        return Integer.parseInt(lengthField.getText());
     }
     public Date getDate() {
         return new Date();
     }
     public Integer getId() {
-        return Integer.parseInt(tf0.getText());
+        return Integer.parseInt(idField.getText());
     }
     
     public List<Integer> getParts() {

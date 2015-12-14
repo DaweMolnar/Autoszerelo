@@ -30,23 +30,29 @@ public class FinalizeJobDialog extends JDialog {
     private boolean finalized = false;
     private boolean closed = false;
     private String dialogError = "";
-    private JComboBox tf0;
-    private JLabel l0;
+    private JComboBox idBox;
+    private final JLabel idLabel;
     public FinalizeJobDialog() {
         this.controller = DatabaseEngine.getJobControllerInstance();
         setSize(500, 50);
         setTitle("Munkalap veglegesitese");
         setLayout(new GridLayout(1, 3));
         
-        l0 = new JLabel("Id");
-        List<Job> jobs = controller.findJobEntities();
+        idLabel = new JLabel("Id");
+        List<Job> jobs = controller.findOpenJobEntities();
+        if(jobs.isEmpty()) {
+            dialogError = "Nincs lezárható munkalap";
+            showErrorDialog();
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            return;
+        }
         jobModel = new DefaultComboBoxModel();
-        tf0 = new JComboBox(jobModel);
+        idBox = new JComboBox(jobModel);
         for(Job j: jobs) {
             jobModel.addElement(j);
         }
-        add(l0);
-        add(tf0);
+        add(idLabel);
+        add(idBox);
         JButton button = new JButton("Veglegesit");
         button.addActionListener(new ActionListener() {
             @Override
@@ -80,8 +86,9 @@ public class FinalizeJobDialog extends JDialog {
         "Véglegesítési hiba",
         JOptionPane.ERROR_MESSAGE);
     }
+
     private boolean formValid() {
-        Job j = (Job)jobModel.getElementAt(tf0.getSelectedIndex());
+        Job j = (Job)jobModel.getElementAt(idBox.getSelectedIndex());
         if(j.getAddress().isEmpty()) {
             dialogError = "A cím mező üres, nem lehet lezárni a kiválasztott munkalapot";
             return false;
@@ -105,7 +112,7 @@ public class FinalizeJobDialog extends JDialog {
         return true;
     }    
     public Integer getId() {
-        return ((Job)jobModel.getElementAt(tf0.getSelectedIndex())).getId();
+        return ((Job)jobModel.getElementAt(idBox.getSelectedIndex())).getId();
     }
     public boolean isFinalized() {
         return finalized;

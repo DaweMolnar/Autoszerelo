@@ -6,6 +6,7 @@
 package autoszerelo.database.controllers;
 
 import autoszerelo.database.entities.Job;
+import autoszerelo.database.entities.Partusage;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -87,6 +88,18 @@ public class JobJpaController  implements Serializable{
 
     public List<Job> findJobEntities() {
         return findJobEntities(true, -1, -1);
+    }
+
+    public List<Job> findOpenJobEntities() {
+         EntityManager em = getEntityManager();
+        try {
+            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+            cq.select(cq.from(Partusage.class));
+            Query q = em.createNamedQuery("Job.findOpen").setParameter("status", false);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     public List<Job> findJobEntities(int maxResults, int firstResult) {
