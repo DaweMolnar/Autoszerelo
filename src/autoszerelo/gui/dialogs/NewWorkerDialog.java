@@ -124,6 +124,10 @@ public class NewWorkerDialog extends JDialog{
             dialogError = "Az ar nem pozitív szám!";
             return false;
         }
+        if(getWage()==0) {
+            dialogError = "Dolgozo nem dolgozhat ingyen";
+            return false;
+        }
         if(workerController.findWorker(Integer.parseInt(idField.getText()))!=null) {
             dialogError = "Már létezik dolgozó az adott id-vel!";
             return false;
