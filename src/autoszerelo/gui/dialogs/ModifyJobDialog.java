@@ -147,11 +147,14 @@ public class ModifyJobDialog  extends JDialog{
     }
 
     private boolean formValid() {
-        if(lengthField.getText().isEmpty()) {
-            dialogError = "A munka hossza mező nincs kitöltve";
+        if(lengthField.getText().isEmpty()
+           || licenseField.getText().isEmpty()
+           || clientName.getText().isEmpty()
+           || addressField.getText().isEmpty()) {
+            dialogError = "Nem minden kötelező mező van kitöltve";
             return false;
         }
-        if(!licenseField.getText().isEmpty() && !licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
+        if(!licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
             dialogError = "A rendszám nem megfelelő formátum (pl: abc123)";
             return false;
         }

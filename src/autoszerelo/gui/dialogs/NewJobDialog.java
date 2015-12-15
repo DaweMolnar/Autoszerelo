@@ -132,12 +132,15 @@ public class NewJobDialog  extends JDialog{
 
     private boolean formValid() {
         if(idField.getText().isEmpty()
-           || lengthField.getText().isEmpty())
+           || lengthField.getText().isEmpty()
+           || licenseField.getText().isEmpty()
+           || nameField.getText().isEmpty()
+           || addressField.getText().isEmpty())
         {
-            dialogError = "A kötelező mezők nincsenek kitöltve (id, hossz)";
+            dialogError = "A kötelező mezők nincsenek kitöltve";
             return false;
         }
-        if(!licenseField.getText().isEmpty() && !licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
+        if(!licenseField.getText().matches("[a-zA-Z]{3}\\d{3}")) {
             dialogError = "A rendszám nem megfelelő formátum (pl: abc123)";
             return false;
         }
