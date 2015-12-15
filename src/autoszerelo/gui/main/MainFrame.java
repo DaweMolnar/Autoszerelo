@@ -98,7 +98,6 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     p.setAddress(dialog.getAddress());
                     p.setPhone(dialog.getPhoneNumber());
                     p.setWage(dialog.getWage());
-                    p.setId(dialog.getId());
                     wTable.add(p);
                 }
             }
@@ -114,7 +113,6 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             NewJobDialog dialog = new NewJobDialog();
                 if(dialog.isClosed() && dialog.isSent()){
                     Job p = new Job();
-                    p.setId(dialog.getId());
                     p.setClientname(dialog.getClientName());
                     p.setAddress(dialog.getAddress());
                     p.setLicenseNo(dialog.getPlateNumber());
@@ -123,10 +121,11 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
                     p.setState(false);
                     p.setLength(dialog.getLength());
                     List<Integer> parts = dialog.getParts();
-                    for(Integer part : parts) {
-                        controller.create(new Partusage(null,dialog.getId(),part));
-                    }
                     jTable.add(p);
+                    for(Integer part : parts) {
+                        controller.create(new Partusage(null,p.getId(),part));
+                    }
+                    jTable.dataChanged(p);
                 }
             }
         });
@@ -141,7 +140,6 @@ public class MainFrame extends JFrame implements WorkerTableInterface, JobTableI
             NewPartDialog dialog = new NewPartDialog();
                 if(dialog.isClosed() && dialog.isSent()){
                     Parts p = new Parts();
-                    p.setId(dialog.getId());
                     p.setPrice(dialog.getPrice());
                     p.setName(dialog.getPartName());
                     pTable.add(p);

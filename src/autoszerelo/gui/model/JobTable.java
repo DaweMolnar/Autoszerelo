@@ -70,7 +70,12 @@ public class JobTable {
         innerTable.add(p, getPrice(p.getId()));
         innerTable.fireTableDataChanged();
     }
-    
+    public void dataChanged(Job j) {
+        innerTable.remove(j.getId());
+        innerTable.add(j,getPrice(j.getId()));
+        innerTable.fireTableDataChanged();
+        innerTable.fireTableDataChanged();
+    }
     public void modify(Job p) {
         Job j = controller.findJob(p.getId());
         j.setClientname(p.getClientname());

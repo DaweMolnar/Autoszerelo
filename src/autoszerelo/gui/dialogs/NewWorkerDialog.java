@@ -5,7 +5,6 @@
  */
 package autoszerelo.gui.dialogs;
 
-import autoszerelo.database.controllers.WorkerJpaController;
 import autoszerelo.database.util.DatabaseEngine;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -26,14 +25,10 @@ public class NewWorkerDialog extends JDialog{
     private final JTextField addressField;
     private final JTextField phoneField;
     private final JTextField priceField;
-    private final JTextField idField;
-    private final JLabel idLabel;
     private final JLabel nameLabel;
     private final JLabel addressLabel;
     private final JLabel phoneLabel;
     private final JLabel priceLabel;
-    
-    private final WorkerJpaController workerController;
     
     private String dialogError = "";
     private boolean sent = false;
@@ -41,22 +36,17 @@ public class NewWorkerDialog extends JDialog{
     public NewWorkerDialog(){
         setSize(300, 400);
         setTitle("Dolgozó hozzáadása");
-        setLayout(new GridLayout(6, 2));
-        this.workerController = DatabaseEngine.getWorkerControllerInstance();
-        idLabel = new JLabel("Id");
+        setLayout(new GridLayout(5, 2));
         nameLabel = new JLabel("Név");
         addressLabel = new JLabel("Cím");
         phoneLabel = new JLabel("Telefonszám");
         priceLabel = new JLabel("Óradíj");
        
-        idField = new JTextField();
         nameField = new JTextField();
         addressField = new JTextField();
         phoneField = new JTextField();
         priceField = new JTextField();
         
-        add(idLabel);
-        add(idField);
         add(nameLabel);
         add(nameField);
         add(addressLabel);
@@ -103,8 +93,7 @@ public class NewWorkerDialog extends JDialog{
     }
     
     private boolean formValid() {
-        if(idField.getText().isEmpty() 
-           || nameField.getText().isEmpty()
+        if(nameField.getText().isEmpty()
            || priceField.getText().isEmpty()
            || phoneField.getText().isEmpty()
            || addressField.getText().isEmpty())
@@ -116,20 +105,12 @@ public class NewWorkerDialog extends JDialog{
             dialogError = "A telefonszám nem megfelelő formátum (pl: +36301231234)";
             return false;
         }
-        if(!idField.getText().matches("\\d+")) {
-            dialogError = "Az id nem pozitív szám!";
-            return false;
-        }
         if(!priceField.getText().matches("\\d+")) {
             dialogError = "Az ar nem pozitív szám!";
             return false;
         }
         if(getWage()==0) {
             dialogError = "Dolgozo nem dolgozhat ingyen";
-            return false;
-        }
-        if(workerController.findWorker(Integer.parseInt(idField.getText()))!=null) {
-            dialogError = "Már létezik dolgozó az adott id-vel!";
             return false;
         }
         return true;
@@ -157,9 +138,5 @@ public class NewWorkerDialog extends JDialog{
     
     public Integer getWage() {
         return Integer.parseInt(priceField.getText());
-    }
-    
-    public Integer getId() {
-        return Integer.parseInt(idField.getText());
     }
 }

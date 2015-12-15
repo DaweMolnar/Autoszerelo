@@ -24,29 +24,21 @@ import javax.swing.JTextField;
 public class NewPartDialog extends JDialog{
     private final JTextField nameField;
     private final JTextField priceField;
-    private final JTextField idField;
-    private final JLabel idLabel;
     private final JLabel nameLabel;
     private final JLabel priceLabel;
     private String dialogError = "";
-    private final PartJpaController partController;
      private boolean sent = false;
     private boolean closed = false;
     public NewPartDialog(){
         setSize(300, 400);
         setTitle("Alkatrész hozzáadása");
         setLayout(new GridLayout(4, 2));
-        this.partController = DatabaseEngine.getPartControllerInstance();
-        idLabel = new JLabel("Id");
         nameLabel = new JLabel("Név");
         priceLabel = new JLabel("Ár");
        
-        idField = new JTextField();
         nameField = new JTextField();
         priceField = new JTextField();
         
-        add(idLabel);
-        add(idField);
         add(nameLabel);
         add(nameField);
         add(priceLabel);
@@ -89,23 +81,14 @@ public class NewPartDialog extends JDialog{
     }
     
     private boolean formValid() {
-        if(idField.getText().isEmpty() 
-           || nameField.getText().isEmpty()
+        if( nameField.getText().isEmpty()
            || priceField.getText().isEmpty())
         {
             dialogError = "A mezők nem mindegyike van kitöltve";
             return false;
         }
-        if(!idField.getText().matches("\\d+")) {
-            dialogError = "Az id nem pozitív szám!";
-            return false;
-        }
         if(!priceField.getText().matches("\\d+")) {
             dialogError = "Az ar nem pozitív szám!";
-            return false;
-        }
-        if(partController.findPart(Integer.parseInt(idField.getText()))!=null) {
-            dialogError = "Már létezik alkatrész az adott id-vel!";
             return false;
         }
         return true;
@@ -125,9 +108,5 @@ public class NewPartDialog extends JDialog{
     
     public Integer getPrice() {
         return Integer.parseInt(priceField.getText());
-    }
-    
-    public Integer getId() {
-        return Integer.parseInt(idField.getText());
     }
 }

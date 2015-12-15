@@ -36,14 +36,12 @@ import javax.swing.ListSelectionModel;
  */
 public class NewJobDialog  extends JDialog{
     List<Integer> partIds;
-    
-    private final JTextField idField;
+
     private final JTextField nameField;
     private final JTextField addressField;
     private final JTextField licenseField;
     private JComboBox mId;
-    private JTextField lengthField;
-    private final JLabel idLabel;
+    private final JTextField lengthField;
     private final JLabel nameLabel;
     private final JLabel addressLabel;
     private final JLabel licenseLabel;
@@ -66,23 +64,19 @@ public class NewJobDialog  extends JDialog{
         this.workerController = DatabaseEngine.getWorkerControllerInstance();
         setSize(300, 450);
         setTitle("Munkalap hozzáadása");
-        setLayout(new GridLayout(9, 2));
+        setLayout(new GridLayout(8, 2));
         
-        idLabel = new JLabel("Id");
         nameLabel = new JLabel("Név");
         addressLabel = new JLabel("Cím");
         licenseLabel = new JLabel("Rendszám");
         workerLabel = new JLabel("MunkatársID");
         lengthLabel = new JLabel("Munka hossza");
        
-        idField = new JTextField();
         nameField = new JTextField();
         addressField = new JTextField();
         licenseField = new JTextField();
         lengthField = new JTextField();
         
-        add(idLabel);
-        add(idField);
         add(nameLabel);
         add(nameField);
         add(addressLabel);
@@ -131,8 +125,7 @@ public class NewJobDialog  extends JDialog{
     }
 
     private boolean formValid() {
-        if(idField.getText().isEmpty()
-           || lengthField.getText().isEmpty()
+        if(lengthField.getText().isEmpty()
            || licenseField.getText().isEmpty()
            || nameField.getText().isEmpty()
            || addressField.getText().isEmpty())
@@ -144,16 +137,8 @@ public class NewJobDialog  extends JDialog{
             dialogError = "A rendszám nem megfelelő formátum (pl: abc123)";
             return false;
         }
-        if(!idField.getText().matches("\\d+")) {
-            dialogError = "Az id nem pozitív szám!";
-            return false;
-        }
         if(!lengthField.getText().matches("\\d+")) {
             dialogError = "Az munka hossza nem pozitív szám!";
-            return false;
-        }
-        if(workerController.findWorker(Integer.parseInt(idField.getText()))!=null) {
-            dialogError = "Már létezik munkalap az adott id-vel!";
             return false;
         }
         return true;
@@ -269,9 +254,6 @@ public class NewJobDialog  extends JDialog{
     }
     public Date getDate() {
         return new Date();
-    }
-    public Integer getId() {
-        return Integer.parseInt(idField.getText());
     }
     
     public List<Integer> getParts() {
