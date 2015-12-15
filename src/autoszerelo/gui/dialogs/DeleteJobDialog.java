@@ -30,7 +30,7 @@ public class DeleteJobDialog extends JDialog {
     private boolean deleted = false;
     private boolean closed = false;
     private String dialogError = "";
-    private final JComboBox idField;
+    private JComboBox idField;
     private final JLabel idLabel;
     public DeleteJobDialog() {
         this.controller = DatabaseEngine.getJobControllerInstance();
@@ -39,7 +39,13 @@ public class DeleteJobDialog extends JDialog {
         setLayout(new GridLayout(1, 3));
         
         idLabel = new JLabel("Id");
-        List<Job> jobs = controller.findJobEntities();
+        List<Job> jobs = controller.findOpenJobEntities();
+        if(jobs.isEmpty()) {
+            dialogError = "Nincs törölhető munkalap";
+            showErrorDialog();
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            return;
+        }
         jobModel = new DefaultComboBoxModel();
         idField = new JComboBox(jobModel);
         for(Job j: jobs) {
@@ -81,11 +87,6 @@ public class DeleteJobDialog extends JDialog {
     }
 
     private boolean formValid() {
-        Job j = (Job)jobModel.getElementAt(idField.getSelectedIndex());
-        if(j.getState()==true) {
-            dialogError = "A Munkalap már ki van fizetve, így nem törölhető";
-            return false;
-        }
         return true;
     }
     
