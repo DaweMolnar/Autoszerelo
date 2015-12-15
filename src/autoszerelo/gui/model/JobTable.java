@@ -140,13 +140,19 @@ public class JobTable {
                case 3:
                    return price.get(rowIndex);
                case 4:
-                   return p.getState();
+                   return getStateAsString(p.getState());
                default:
                    return null;
            }
            
         }
-
+        private String getStateAsString(boolean state) {
+            if(state) {
+                return "Teljesitve";
+            } else {
+                return "Nem teljesitve";
+            }
+        }
         private void add(Job p, Integer pr) {
             data.add(p);
             price.add(pr);
